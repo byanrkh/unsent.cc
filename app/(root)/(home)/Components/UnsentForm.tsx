@@ -10,8 +10,6 @@ export default function UnsentForm() {
   const hasWord = message.trim().length > 0;
 
   useEffect(() => {
-    // Autofocus cuma di layar besar, biar keyboard mobile
-    // nggak nongol tiba-tiba dan geser scroll.
     if (window.matchMedia("(min-width: 641px)").matches) {
       inputRef.current?.focus({ preventScroll: true });
     }
@@ -19,12 +17,11 @@ export default function UnsentForm() {
 
   function handleContinue() {
     if (!hasWord) return;
-    // TODO: sambungin ke step berikutnya di flow
   }
 
   return (
     <div className="w-full min-w-0">
-      <div className="flex min-w-0 min-h-[44px] items-center sm:min-h-[56px]">
+      <div className="flex min-w-0 min-h-11 items-center sm:min-h-14">
         <input
           ref={inputRef}
           type="text"
@@ -39,7 +36,7 @@ export default function UnsentForm() {
         />
       </div>
 
-      <div className="mt-2.5 flex h-[50px] items-center sm:mt-4 sm:h-[60px]">
+      <div className="mt-2.5 flex h-12.5 items-center sm:mt-4 sm:h-15">
         <button
           type="button"
           onClick={handleContinue}

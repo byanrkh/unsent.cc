@@ -1,38 +1,48 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { jetbrainsMono } from "@/libs/Font";
 
 export default function UnsentForm() {
   const [message, setMessage] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const router = useRouter();
 
   const hasWord = message.trim().length > 0;
 
   useEffect(() => {
     if (window.matchMedia("(min-width: 641px)").matches) {
-      inputRef.current?.focus({ preventScroll: true });
+      textareaRef.current?.focus({ preventScroll: true });
     }
   }, []);
 
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight}px`;
+  }, [message]);
+
   function handleContinue() {
     if (!hasWord) return;
+    router.push(`/submit?message=${encodeURIComponent(message)}`);
   }
 
   return (
     <div className="w-full min-w-0">
-      <div className="flex min-w-0 min-h-11 items-center sm:min-h-14">
-        <input
-          ref={inputRef}
-          type="text"
+      <div className="flex min-w-0 min-h-11 items-start sm:min-h-14">
+        <textarea
+          ref={textareaRef}
           placeholder="Type your unsent message here..."
           autoComplete="off"
           autoCapitalize="off"
           spellCheck={false}
           maxLength={600}
+          rows={1}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          className={`${jetbrainsMono.className} min-w-0 w-full flex-1 bg-transparent py-1.5 text-[15px] font-light text-[#171717] outline-none placeholder:text-[#9c9c9c] [caret-shape:bar] caret-[#171717] sm:text-[20px] md:text-[26px] lg:text-[32px]`}
+          className={`${jetbrainsMono.className} min-w-0 w-full flex-1 resize-none overflow-hidden bg-transparent py-1.5 text-[15px] font-light leading-normal text-[#171717] outline-none placeholder:text-[#9c9c9c] [caret-shape:bar] caret-[#171717] transition-[height] duration-100 ease-out sm:text-[20px] md:text-[26px] lg:text-[32px]`}
         />
       </div>
 

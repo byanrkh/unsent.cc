@@ -6,5 +6,5 @@ export const newsreader = Newsreader({
   variable: "--font-newsreader",
 });
 
-export const jetbrainsMono = Google_Sans_Code({adjustFontFallback: true, subsets: ["latin"], weight: ["400", "500", "600", "700"] 
+export const Mono = Google_Sans_Code({adjustFontFallback: true, subsets: ["latin"], weight: ["400", "500", "600", "700"] 
 });

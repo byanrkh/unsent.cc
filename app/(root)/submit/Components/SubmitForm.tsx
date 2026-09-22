@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { jetbrainsMono } from "@/libs/Font";
+import { Mono } from "@/libs/Font";
 
 export default function SubmitForm() {
   const searchParams = useSearchParams();
@@ -40,7 +40,7 @@ export default function SubmitForm() {
             maxLength={60}
             value={to}
             onChange={(e) => setTo(e.target.value)}
-            className={`${jetbrainsMono.className} min-w-0 w-full bg-transparent py-1 text-[15px] font-light text-[#171717] outline-none placeholder:text-[#9c9c9c] [caret-shape:bar] caret-[#171717] sm:text-[18px]`}
+            className={`${Mono.className} min-w-0 w-full bg-transparent py-1 text-[15px] font-light text-[#171717] outline-none placeholder:text-[#9c9c9c] [caret-shape:bar] caret-[#171717] sm:text-[18px]`}
           />
         </label>
 
@@ -58,7 +58,7 @@ export default function SubmitForm() {
             rows={1}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            className={`${jetbrainsMono.className} min-w-0 w-full resize-none overflow-hidden bg-transparent py-1.5 text-[15px] font-light leading-normal text-[#171717] outline-none placeholder:text-[#9c9c9c] [caret-shape:bar] caret-[#171717] transition-[height] duration-100 ease-out sm:text-[20px] md:text-[24px]`}
+            className={`${Mono.className} min-w-0 w-full resize-none overflow-hidden bg-transparent py-1.5 text-[15px] font-light leading-normal text-[#171717] outline-none placeholder:text-[#9c9c9c] [caret-shape:bar] caret-[#171717] transition-[height] duration-100 ease-out sm:text-[20px] md:text-[24px]`}
           />
         </label>
       </div>

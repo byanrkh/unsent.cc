@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { jetbrainsMono, newsreader } from "@/libs/Font";
+import { newsreader } from "@/libs/Font";
 
 export const metadata: Metadata = {
   title: "Create Next App",

@@ -1,6 +1,6 @@
 import UnsentForm from "./Components/UnsentForm";
 
-const THINGS_LEFT_UNSAID = 2_509_533;
+const THINGS_LEFT_UNSAID = 150;
 
 export default function page() {
   return (

@@ -1,4 +1,4 @@
-import { Google_Sans_Code, Newsreader } from "next/font/google";
+import { Edu_SA_Hand,  Newsreader } from "next/font/google";
 
 export const newsreader = Newsreader({
   subsets: ["latin"],
@@ -6,5 +6,8 @@ export const newsreader = Newsreader({
   variable: "--font-newsreader",
 });
 
-export const Mono = Google_Sans_Code({adjustFontFallback: true, subsets: ["latin"], weight: ["400", "500", "600", "700"] 
+export const Mono = Edu_SA_Hand({
+  adjustFontFallback: false, 
+  subsets: ["latin"], 
+  weight: ["400", "500", "600", "700"]
 });

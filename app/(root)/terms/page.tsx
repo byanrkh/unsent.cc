@@ -3,5 +3,5 @@ import { Mono } from "@/libs/Font";
 import React from "react";
 
 export default function page() {
-  return <Container>/explore</Container>;
+  return <Container>/terms</Container>;
 }

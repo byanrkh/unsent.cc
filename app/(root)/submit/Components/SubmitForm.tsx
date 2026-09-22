@@ -30,22 +30,6 @@ export default function SubmitForm() {
       <div className="flex flex-col gap-7 sm:gap-8">
         <label className="flex min-w-0 flex-col gap-1.5">
           <span className="text-xs tracking-wide text-[#9c9c9c] sm:text-sm">
-            From
-          </span>
-          <input
-            type="text"
-            placeholder="Anonymous"
-            autoComplete="off"
-            spellCheck={false}
-            maxLength={60}
-            value={from}
-            onChange={(e) => setFrom(e.target.value)}
-            className={`${jetbrainsMono.className} min-w-0 w-full bg-transparent py-1 text-[15px] font-light text-[#171717] outline-none placeholder:text-[#9c9c9c] [caret-shape:bar] caret-[#171717] sm:text-[18px]`}
-          />
-        </label>
-
-        <label className="flex min-w-0 flex-col gap-1.5">
-          <span className="text-xs tracking-wide text-[#9c9c9c] sm:text-sm">
             To
           </span>
           <input

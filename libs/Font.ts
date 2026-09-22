@@ -1,4 +1,4 @@
-import { Newsreader, JetBrains_Mono } from "next/font/google";
+import { Google_Sans_Code, Newsreader } from "next/font/google";
 
 export const newsreader = Newsreader({
   subsets: ["latin"],
@@ -6,8 +6,5 @@ export const newsreader = Newsreader({
   variable: "--font-newsreader",
 });
 
-export const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-jetbrains-mono",
+export const jetbrainsMono = Google_Sans_Code({adjustFontFallback: true, subsets: ["latin"], weight: ["400", "500", "600", "700"] 
 });

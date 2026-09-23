@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Mono } from "@/libs/Font";
+import ShareModal from "./ShareModal";
 
 type ExploreCardProps = {
   to: string;
@@ -10,30 +11,7 @@ type ExploreCardProps = {
 };
 
 export default function ExploreCard({ to, message, date }: ExploreCardProps) {
-  const [copied, setCopied] = useState(false);
-
-  async function handleShare() {
-    const shareData = {
-      title: "unsent.cc",
-      text: `An unsent message to ${to} — read it on unsent.cc`,
-      url: typeof window !== "undefined" ? window.location.href : "",
-    };
-
-    if (typeof navigator !== "undefined" && navigator.share) {
-      try {
-        await navigator.share(shareData);
-      } catch {
-        // user closed the share sheet — nothing to do
-      }
-      return;
-    }
-
-    if (typeof navigator !== "undefined" && navigator.clipboard) {
-      await navigator.clipboard.writeText(shareData.url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1800);
-    }
-  }
+  const [shareOpen, setShareOpen] = useState(false);
 
   return (
     <article className="group relative w-full rounded-2xl border border-[#171717]/8 bg-[#fbfaf8] px-6 py-6 shadow-[0_1px_2px_rgba(23,23,23,0.04)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(23,23,23,0.07)] sm:px-8 sm:py-8">
@@ -44,7 +22,7 @@ export default function ExploreCard({ to, message, date }: ExploreCardProps) {
 
         <button
           type="button"
-          onClick={handleShare}
+          onClick={() => setShareOpen(true)}
           aria-label="Share this message"
           className="relative -m-1.5 shrink-0 rounded-full p-1.5 text-[#9c9c9c] transition-colors duration-200 hover:text-[#171717] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#171717]/40"
         >
@@ -62,15 +40,6 @@ export default function ExploreCard({ to, message, date }: ExploreCardProps) {
             <polyline points="16 6 12 2 8 6" />
             <line x1="12" y1="2" x2="12" y2="15" />
           </svg>
-
-          <span
-            role="status"
-            className={`pointer-events-none absolute -top-8 right-0 whitespace-nowrap rounded-md bg-[#171717] px-2 py-1 text-[11px] text-white transition-opacity duration-200 ${
-              copied ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            Link copied
-          </span>
         </button>
       </div>
 
@@ -85,6 +54,14 @@ export default function ExploreCard({ to, message, date }: ExploreCardProps) {
           {date}
         </p>
       )}
+
+      <ShareModal
+        open={shareOpen}
+        onClose={() => setShareOpen(false)}
+        to={to}
+        message={message}
+        date={date}
+      />
     </article>
   );
 }

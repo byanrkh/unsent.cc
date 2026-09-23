@@ -92,6 +92,8 @@ export default function UnsentForm() {
         </button>
 
         <motion.span
+          layoutId="unsent-count"
+          layout="preserve-aspect"
           className={`text-[11px] tabular-nums transition-colors duration-200 sm:text-xs ${getCounterColor(
             message.length,
           )}`}

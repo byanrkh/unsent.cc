@@ -17,7 +17,7 @@ export default function ExploreCard({ to, message, date }: ExploreCardProps) {
     <article className="group relative w-full rounded-2xl border border-[#171717]/8 bg-[#fbfaf8] px-6 py-6 shadow-[0_1px_2px_rgba(23,23,23,0.04)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(23,23,23,0.07)] sm:px-8 sm:py-8">
       <div className="flex items-start justify-between gap-4">
         <p className="text-xs tracking-wide text-[#9c9c9c] sm:text-sm">
-          To <span className="text-[#171717]">{to}</span>
+          To: <span className="text-[#171717]">{to}</span>
         </p>
 
         <button

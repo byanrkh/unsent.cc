@@ -151,7 +151,7 @@ async function drawCard(
   ctx.textBaseline = "alphabetic";
   ctx.font = `${labelSize}px ${serifFamily}`;
   ctx.fillStyle = MUTED;
-  const toLabel = "To ";
+  const toLabel = "To: ";
   const toLabelWidth = ctx.measureText(toLabel).width;
   const labelY = cardY + cardH * 0.16;
   ctx.fillText(toLabel, innerX, labelY);

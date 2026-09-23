@@ -6,12 +6,19 @@ import { motion } from "framer-motion";
 import { Mono } from "@/libs/Font";
 
 const UNSENT_MESSAGE_KEY = "unsent-message";
+const MAX_MESSAGE_LENGTH = 100;
 
 const morphTransition = {
   type: "tween" as const,
   duration: 0.6,
   ease: [0.16, 1, 0.3, 1] as const,
 };
+
+function getCounterColor(length: number) {
+  if (length >= MAX_MESSAGE_LENGTH) return "text-[#9a3b32]";
+  if (length > 80) return "text-[#171717]";
+  return "text-[#9c9c9c]";
+}
 
 export default function UnsentForm() {
   const [message, setMessage] = useState("");
@@ -57,16 +64,18 @@ export default function UnsentForm() {
           autoComplete="off"
           autoCapitalize="off"
           spellCheck={false}
-          maxLength={600}
+          maxLength={MAX_MESSAGE_LENGTH}
           rows={1}
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={(e) =>
+            setMessage(e.target.value.slice(0, MAX_MESSAGE_LENGTH))
+          }
           transition={morphTransition}
           className={`${Mono.className} min-w-0 w-full flex-1 resize-none overflow-hidden bg-transparent py-1.5 text-[15px] font-light leading-normal text-[#171717] outline-none placeholder:text-[#9c9c9c] [caret-shape:bar] caret-[#171717] sm:text-[20px] md:text-[26px] lg:text-[32px]`}
         />
       </div>
 
-      <div className="mt-2.5 flex h-12.5 items-center sm:mt-4 sm:h-15">
+      <div className="mt-2.5 flex h-12.5 items-center justify-between sm:mt-4 sm:h-15">
         <button
           type="button"
           onClick={handleContinue}
@@ -81,6 +90,14 @@ export default function UnsentForm() {
             →
           </span>
         </button>
+
+        <span
+          className={`text-[11px] tabular-nums transition-colors duration-200 sm:text-xs ${getCounterColor(
+            message.length,
+          )}`}
+        >
+          {message.length}/{MAX_MESSAGE_LENGTH}
+        </span>
       </div>
     </div>
   );

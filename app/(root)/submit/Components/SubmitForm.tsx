@@ -5,12 +5,19 @@ import { motion } from "framer-motion";
 import { Mono } from "@/libs/Font";
 
 const UNSENT_MESSAGE_KEY = "unsent-message";
+const MAX_MESSAGE_LENGTH = 100;
 
 const morphTransition = {
   type: "tween" as const,
   duration: 0.6,
   ease: [0.16, 1, 0.3, 1] as const,
 };
+
+function getCounterColor(length: number) {
+  if (length >= MAX_MESSAGE_LENGTH) return "text-[#9a3b32]";
+  if (length > 80) return "text-[#171717]";
+  return "text-[#9c9c9c]";
+}
 
 export default function SubmitForm() {
   const [from, setFrom] = useState("");
@@ -22,7 +29,7 @@ export default function SubmitForm() {
   useEffect(() => {
     const stored = sessionStorage.getItem(UNSENT_MESSAGE_KEY);
     if (stored) {
-      setMessage(stored);
+      setMessage(stored.slice(0, MAX_MESSAGE_LENGTH));
     }
   }, []);
 
@@ -68,13 +75,22 @@ export default function SubmitForm() {
             autoComplete="off"
             autoCapitalize="off"
             spellCheck={false}
-            maxLength={600}
+            maxLength={MAX_MESSAGE_LENGTH}
             rows={1}
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            onChange={(e) =>
+              setMessage(e.target.value.slice(0, MAX_MESSAGE_LENGTH))
+            }
             transition={morphTransition}
             className={`${Mono.className} min-w-0 w-full resize-none overflow-hidden bg-transparent py-1.5 text-[15px] font-light leading-normal text-[#171717] outline-none placeholder:text-[#9c9c9c] [caret-shape:bar] caret-[#171717] sm:text-[20px] md:text-[24px]`}
           />
+          <span
+            className={`self-end text-[11px] tabular-nums transition-colors duration-200 sm:text-xs ${getCounterColor(
+              message.length,
+            )}`}
+          >
+            {message.length}/{MAX_MESSAGE_LENGTH}
+          </span>
         </label>
       </div>
 

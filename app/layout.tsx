@@ -2,17 +2,12 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { newsreader } from "@/libs/Font";
 
-// NOTE: ganti ke domain asli project lu kalau beda dari ini.
 const SITE_URL = "https://unsent.cc";
 const SITE_NAME = "unsent.cc";
 const SITE_TITLE = "unsent.cc — Say the things you never sent";
 const SITE_DESCRIPTION =
   "Write the message you never had the courage to send. unsent.cc is a quiet place to leave unsent letters — anonymous, unfiltered, and read gently by strangers who understand.";
 
-// TODO: banner ini masih dummy (placeholder generator). Ganti url di bawah
-// begitu banner asli (1200x630, palet #fbfaf8 / #171717) udah jadi —
-// idealnya taro filenya di /public/og-image.png terus tinggal ganti
-// string-nya jadi "/og-image.png".
 const OG_IMAGE_URL = "/og-image.png";
 
 export const metadata: Metadata = {

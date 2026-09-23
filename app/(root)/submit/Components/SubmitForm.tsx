@@ -3,8 +3,10 @@
 import { useLayoutEffect, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Mono } from "@/libs/Font";
+import { showToast } from "@/libs/toastBus";
 
 const UNSENT_MESSAGE_KEY = "unsent-message";
+const UNSENT_TO_KEY = "unsent-to";
 const MAX_MESSAGE_LENGTH = 100;
 
 const morphTransition = {
@@ -25,12 +27,51 @@ export default function SubmitForm() {
   const [message, setMessage] = useState("");
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const hasSubmittedRef = useRef(false);
+
+  // Keep the latest values in refs so the unmount-detection effect
+  // below doesn't need `to`/`message` in its deps.
+  const toRef = useRef(to);
+  const messageRef = useRef(message);
 
   useEffect(() => {
-    const stored = sessionStorage.getItem(UNSENT_MESSAGE_KEY);
-    if (stored) {
-      setMessage(stored.slice(0, MAX_MESSAGE_LENGTH));
-    }
+    toRef.current = to;
+  }, [to]);
+
+  useEffect(() => {
+    messageRef.current = message;
+  }, [message]);
+
+  // Load any existing draft on mount.
+  useEffect(() => {
+    const storedMessage = sessionStorage.getItem(UNSENT_MESSAGE_KEY);
+    const storedTo = sessionStorage.getItem(UNSENT_TO_KEY);
+    if (storedMessage) setMessage(storedMessage.slice(0, MAX_MESSAGE_LENGTH));
+    if (storedTo) setTo(storedTo);
+  }, []);
+
+  // Auto-save the draft as the user types.
+  useEffect(() => {
+    sessionStorage.setItem(UNSENT_MESSAGE_KEY, message);
+  }, [message]);
+
+  useEffect(() => {
+    sessionStorage.setItem(UNSENT_TO_KEY, to);
+  }, [to]);
+
+  // If the user navigates away without submitting, let them know
+  // the draft is safe and how to get back to it. Deps are empty so
+  // this cleanup only fires once, on real unmount — not every keystroke.
+  useEffect(() => {
+    return () => {
+      const hasDraft =
+        toRef.current.trim().length > 0 || messageRef.current.trim().length > 0;
+      if (!hasSubmittedRef.current && hasDraft) {
+        showToast(
+          "Draft saved — come back to /submit to pick up where you left off.",
+        );
+      }
+    };
   }, []);
 
   useLayoutEffect(() => {
@@ -42,6 +83,9 @@ export default function SubmitForm() {
 
   function handleLeave() {
     // Frontend only for now — no submission logic yet.
+    hasSubmittedRef.current = true;
+    sessionStorage.removeItem(UNSENT_MESSAGE_KEY);
+    sessionStorage.removeItem(UNSENT_TO_KEY);
   }
 
   return (

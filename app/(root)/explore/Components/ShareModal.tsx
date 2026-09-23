@@ -13,6 +13,7 @@ type ShareModalProps = {
   to: string;
   message: string;
   date?: string;
+  feltCount?: number;
 };
 
 const FORMATS: { id: Format; label: string; width: number; height: number }[] =
@@ -117,6 +118,7 @@ async function drawCard(
   to: string,
   message: string,
   date: string | undefined,
+  feltCount: number | undefined,
   monoFamily: string,
   serifFamily: string,
 ) {
@@ -157,6 +159,15 @@ async function drawCard(
   ctx.fillText(toLabel, innerX, labelY);
   ctx.fillStyle = INK;
   ctx.fillText(to, innerX + toLabelWidth, labelY);
+
+  // "♥ N felt this" — right-aligned, same row as the "To:" label
+  if (feltCount && feltCount > 0) {
+    const feltLabel = `♥ ${feltCount} felt this`;
+    ctx.font = `${labelSize}px ${serifFamily}`;
+    ctx.fillStyle = MUTED;
+    const feltWidth = ctx.measureText(feltLabel).width;
+    ctx.fillText(feltLabel, cardX + cardW - cardW * 0.09 - feltWidth, labelY);
+  }
 
   // message, vertically centered in the remaining space
   const messageTop = labelY + cardH * 0.06;
@@ -213,6 +224,7 @@ export default function ShareModal({
   to,
   message,
   date,
+  feltCount = 0,
 }: ShareModalProps) {
   const [format, setFormat] = useState<Format>("square");
   const [dataUrl, setDataUrl] = useState<string | null>(null);
@@ -269,6 +281,7 @@ export default function ShareModal({
         to,
         message,
         date,
+        feltCount,
         monoFamily,
         serifFamily,
       );
@@ -284,7 +297,7 @@ export default function ShareModal({
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, format, to, message, date]);
+  }, [open, format, to, message, date, feltCount]);
 
   async function handleDownload() {
     if (!dataUrl) return;
@@ -364,29 +377,37 @@ export default function ShareModal({
               </button>
             </div>
 
-            {/* format toggle */}
-            <div className="mt-4 inline-flex rounded-full border border-[#171717]/10 bg-white p-1">
-              {FORMATS.map((f) => (
-                <button
-                  key={f.id}
-                  type="button"
-                  onClick={() => setFormat(f.id)}
-                  className={`relative rounded-full px-4 py-1.5 text-[13px] transition-colors duration-200 ${
-                    format === f.id
-                      ? "text-[#171717]"
-                      : "text-[#9c9c9c] hover:text-[#171717]"
-                  }`}
-                >
-                  {format === f.id && (
-                    <motion.span
-                      layoutId="share-format-pill"
-                      className="absolute inset-0 rounded-full bg-[#fbfaf8] border border-[#171717]/10"
-                      transition={modalTransition}
-                    />
-                  )}
-                  <span className="relative">{f.label}</span>
-                </button>
-              ))}
+            {/* format toggle + felt count */}
+            <div className="mt-4 flex items-center justify-between gap-3">
+              <div className="inline-flex rounded-full border border-[#171717]/10 bg-white p-1">
+                {FORMATS.map((f) => (
+                  <button
+                    key={f.id}
+                    type="button"
+                    onClick={() => setFormat(f.id)}
+                    className={`relative rounded-full px-4 py-1.5 text-[13px] transition-colors duration-200 ${
+                      format === f.id
+                        ? "text-[#171717]"
+                        : "text-[#9c9c9c] hover:text-[#171717]"
+                    }`}
+                  >
+                    {format === f.id && (
+                      <motion.span
+                        layoutId="share-format-pill"
+                        className="absolute inset-0 rounded-full bg-[#fbfaf8] border border-[#171717]/10"
+                        transition={modalTransition}
+                      />
+                    )}
+                    <span className="relative">{f.label}</span>
+                  </button>
+                ))}
+              </div>
+
+              {feltCount > 0 && (
+                <p className="text-[11px] tracking-wide text-[#9c9c9c] sm:text-xs">
+                  ♥ {feltCount} felt this
+                </p>
+              )}
             </div>
 
             {/* preview */}

@@ -4,9 +4,11 @@ import { useState } from "react";
 import ExploreCard from "./ExploreCard";
 
 type Letter = {
+  id: string;
   to: string;
   message: string;
   date?: string;
+  feltCount?: number;
 };
 
 type ExploreSearchProps = {
@@ -64,12 +66,14 @@ export default function ExploreSearch({ letters }: ExploreSearchProps) {
 
       {filteredLetters.length > 0 ? (
         <div className="grid grid-cols-1 gap-5 sm:gap-6">
-          {filteredLetters.map((letter, index) => (
+          {filteredLetters.map((letter) => (
             <ExploreCard
-              key={`${letter.to}-${index}`}
+              key={letter.id}
+              id={letter.id}
               to={letter.to}
               message={letter.message}
               date={letter.date}
+              feltCount={letter.feltCount}
             />
           ))}
         </div>

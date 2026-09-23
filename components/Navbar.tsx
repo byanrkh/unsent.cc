@@ -10,20 +10,17 @@ export default function Navbar() {
         >
           unsent.cc
         </Link>
-        <div className="flex items-center gap-5 sm:gap-8">
-          <Link
-            href="/explore"
-            className="text-[#171717] transition-opacity hover:opacity-55"
-          >
-            Explore
-          </Link>
-          <Link
-            href="/terms"
-            className="text-[#171717] transition-opacity hover:opacity-55"
-          >
-            Terms
-          </Link>
-        </div>
+        <ul className="flex items-center gap-5 sm:gap-8">
+          <li className="text-[#171717] transition-opacity hover:opacity-55">
+            <Link href="/explore">Explore</Link>
+          </li>
+          <li className="text-[#171717] transition-opacity hover:opacity-55">
+            <Link href="/terms">Terms</Link>
+          </li>
+          <li className="transition-opacity hover:opacity-55">
+            <Link href="/submit">Submit</Link>
+          </li>
+        </ul>
       </div>
     </nav>
   );

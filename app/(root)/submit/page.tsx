@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import SubmitForm from "./Components/SubmitForm";
 
 export default function Page() {
@@ -12,9 +11,7 @@ export default function Page() {
             add a few details.
           </p>
 
-          <Suspense fallback={null}>
-            <SubmitForm />
-          </Suspense>
+          <SubmitForm />
         </div>
       </main>
     </div>

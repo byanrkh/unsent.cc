@@ -1,20 +1,32 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useLayoutEffect, useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import { Mono } from "@/libs/Font";
 
-export default function SubmitForm() {
-  const searchParams = useSearchParams();
-  const initialMessage = searchParams.get("message") ?? "";
+const UNSENT_MESSAGE_KEY = "unsent-message";
 
+const morphTransition = {
+  type: "tween" as const,
+  duration: 0.6,
+  ease: [0.16, 1, 0.3, 1] as const,
+};
+
+export default function SubmitForm() {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
-  const [message, setMessage] = useState(initialMessage);
+  const [message, setMessage] = useState("");
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
+    const stored = sessionStorage.getItem(UNSENT_MESSAGE_KEY);
+    if (stored) {
+      setMessage(stored);
+    }
+  }, []);
+
+  useLayoutEffect(() => {
     const el = textareaRef.current;
     if (!el) return;
     el.style.height = "auto";
@@ -48,7 +60,9 @@ export default function SubmitForm() {
           <span className="text-xs tracking-wide text-[#9c9c9c] sm:text-sm">
             Message
           </span>
-          <textarea
+          <motion.textarea
+            layoutId="unsent-message"
+            layout="preserve-aspect"
             ref={textareaRef}
             placeholder="Type your unsent message here..."
             autoComplete="off"
@@ -58,7 +72,8 @@ export default function SubmitForm() {
             rows={1}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            className={`${Mono.className} min-w-0 w-full resize-none overflow-hidden bg-transparent py-1.5 text-[15px] font-light leading-normal text-[#171717] outline-none placeholder:text-[#9c9c9c] [caret-shape:bar] caret-[#171717] transition-[height] duration-100 ease-out sm:text-[20px] md:text-[24px]`}
+            transition={morphTransition}
+            className={`${Mono.className} min-w-0 w-full resize-none overflow-hidden bg-transparent py-1.5 text-[15px] font-light leading-normal text-[#171717] outline-none placeholder:text-[#9c9c9c] [caret-shape:bar] caret-[#171717] sm:text-[20px] md:text-[24px]`}
           />
         </label>
       </div>

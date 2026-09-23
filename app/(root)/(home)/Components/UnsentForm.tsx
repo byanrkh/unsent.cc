@@ -1,9 +1,17 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useLayoutEffect, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import { Mono } from "@/libs/Font";
-import Link from "next/link";
+
+const UNSENT_MESSAGE_KEY = "unsent-message";
+
+const morphTransition = {
+  type: "tween" as const,
+  duration: 0.6,
+  ease: [0.16, 1, 0.3, 1] as const,
+};
 
 export default function UnsentForm() {
   const [message, setMessage] = useState("");
@@ -19,6 +27,13 @@ export default function UnsentForm() {
   }, []);
 
   useEffect(() => {
+    router.prefetch("/submit");
+  }, [router]);
+
+  // useLayoutEffect (not useEffect) so the height is final BEFORE the
+  // browser paints — this stops framer-motion from measuring a
+  // mid-resize size and causing a visible jump during the transition.
+  useLayoutEffect(() => {
     const el = textareaRef.current;
     if (!el) return;
     el.style.height = "auto";
@@ -27,13 +42,16 @@ export default function UnsentForm() {
 
   function handleContinue() {
     if (!hasWord) return;
-    router.push(`/submit?message=${encodeURIComponent(message)}`);
+    sessionStorage.setItem(UNSENT_MESSAGE_KEY, message);
+    router.push("/submit");
   }
 
   return (
     <div className="w-full min-w-0">
       <div className="flex min-w-0 min-h-11 items-start sm:min-h-14">
-        <textarea
+        <motion.textarea
+          layoutId="unsent-message"
+          layout="preserve-aspect"
           ref={textareaRef}
           placeholder="Type your unsent message here..."
           autoComplete="off"
@@ -43,7 +61,8 @@ export default function UnsentForm() {
           rows={1}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          className={`${Mono.className} min-w-0 w-full flex-1 resize-none overflow-hidden bg-transparent py-1.5 text-[15px] font-light leading-normal text-[#171717] outline-none placeholder:text-[#9c9c9c] [caret-shape:bar] caret-[#171717] transition-[height] duration-100 ease-out sm:text-[20px] md:text-[26px] lg:text-[32px]`}
+          transition={morphTransition}
+          className={`${Mono.className} min-w-0 w-full flex-1 resize-none overflow-hidden bg-transparent py-1.5 text-[15px] font-light leading-normal text-[#171717] outline-none placeholder:text-[#9c9c9c] [caret-shape:bar] caret-[#171717] sm:text-[20px] md:text-[26px] lg:text-[32px]`}
         />
       </div>
 

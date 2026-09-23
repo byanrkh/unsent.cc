@@ -1,4 +1,26 @@
+import type { Metadata } from "next";
 import SubmitForm from "./Components/SubmitForm";
+
+const PAGE_TITLE = "Submit";
+const PAGE_DESCRIPTION =
+  "Add a few final details and leave your unsent message on unsent.cc — anonymous, unfiltered, and read gently by strangers.";
+
+export const metadata: Metadata = {
+  title: PAGE_TITLE,
+  description: PAGE_DESCRIPTION,
+  alternates: {
+    canonical: "/submit",
+  },
+  openGraph: {
+    title: PAGE_TITLE,
+    description: PAGE_DESCRIPTION,
+    url: "/submit",
+  },
+  twitter: {
+    title: PAGE_TITLE,
+    description: PAGE_DESCRIPTION,
+  },
+};
 
 export default function Page() {
   return (

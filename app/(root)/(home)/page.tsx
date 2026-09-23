@@ -2,7 +2,7 @@ import UnsentForm from "./Components/UnsentForm";
 
 const THINGS_LEFT_UNSAID = 150;
 
-export default function page() {
+export default function Page() {
   return (
     <div className="flex flex-1 flex-col">
       <main className="flex flex-1 items-center px-6 sm:px-10">

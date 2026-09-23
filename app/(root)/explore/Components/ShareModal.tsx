@@ -52,6 +52,9 @@ function roundedRect(
   ctx.closePath();
 }
 
+// Wraps text at word boundaries. If a single word is wider than
+// maxWidth on its own (e.g. a long string with no spaces), it's broken
+// character-by-character instead of being left to overflow the card.
 function wrapText(
   ctx: CanvasRenderingContext2D,
   text: string,
@@ -61,7 +64,30 @@ function wrapText(
   const lines: string[] = [];
   let current = "";
 
+  function flushCurrent() {
+    if (current) {
+      lines.push(current);
+      current = "";
+    }
+  }
+
   for (const word of words) {
+    if (ctx.measureText(word).width > maxWidth) {
+      flushCurrent();
+      let chunk = "";
+      for (const char of word) {
+        const attempt = chunk + char;
+        if (ctx.measureText(attempt).width > maxWidth && chunk) {
+          lines.push(chunk);
+          chunk = char;
+        } else {
+          chunk = attempt;
+        }
+      }
+      current = chunk;
+      continue;
+    }
+
     const attempt = current ? `${current} ${word}` : word;
     if (ctx.measureText(attempt).width > maxWidth && current) {
       lines.push(current);
@@ -70,7 +96,7 @@ function wrapText(
       current = attempt;
     }
   }
-  if (current) lines.push(current);
+  flushCurrent();
   return lines;
 }
 

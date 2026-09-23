@@ -1,30 +1,23 @@
 "use client";
 
-import { useLayoutEffect, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Mono } from "@/libs/Font";
 import { useResponsiveFontSize } from "@/libs/useResponsiveFontSize";
+import { useAutoResizeTextarea } from "@/libs/useAutoResizeTextarea";
+import {
+  MAX_MESSAGE_LENGTH,
+  morphTransition,
+  getCounterColor,
+} from "@/libs/form";
 
 const UNSENT_MESSAGE_KEY = "unsent-message";
-const MAX_MESSAGE_LENGTH = 100;
-
-const morphTransition = {
-  type: "tween" as const,
-  duration: 0.6,
-  ease: [0.16, 1, 0.3, 1] as const,
-};
 
 // Same values that used to live in the `text-[15px] sm:text-[20px]
 // md:text-[26px] lg:text-[32px]` Tailwind classes — now resolved in JS
 // so framer-motion can animate the value itself.
 const MESSAGE_FONT_SIZE = { base: 15, sm: 20, md: 26, lg: 32 };
-
-function getCounterColor(length: number) {
-  if (length >= MAX_MESSAGE_LENGTH) return "text-[#9a3b32]";
-  if (length > 80) return "text-[#171717]";
-  return "text-[#9c9c9c]";
-}
 
 export default function UnsentForm() {
   const [message, setMessage] = useState("");
@@ -44,20 +37,7 @@ export default function UnsentForm() {
     router.prefetch("/submit");
   }, [router]);
 
-  // useLayoutEffect (not useEffect) so the height is final BEFORE the
-  // browser paints — this stops framer-motion from measuring a
-  // mid-resize size and causing a visible jump during the transition.
-  // `fontSize` is also a dep: it's resolved asynchronously (after the
-  // initial paint) by useResponsiveFontSize, so the height must be
-  // recomputed once it lands — otherwise the box stays sized for the
-  // smaller base font and the larger text gets clipped by
-  // overflow-hidden.
-  useLayoutEffect(() => {
-    const el = textareaRef.current;
-    if (!el) return;
-    el.style.height = "auto";
-    el.style.height = `${el.scrollHeight}px`;
-  }, [message, fontSize]);
+  useAutoResizeTextarea(textareaRef, message, fontSize);
 
   function handleContinue() {
     if (!hasWord) return;

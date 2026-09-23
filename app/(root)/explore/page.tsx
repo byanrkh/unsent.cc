@@ -13,7 +13,7 @@ export default function Page() {
       <div className="grid grid-cols-1 gap-5 sm:gap-6">
         <ExploreCard
           to="Kasep"
-          message="I still remember the way you laughed at your own jokes before anyone else did. I never told you that was my favorite sound. I hope wherever you are, someone else gets to hear it too."
+          message="Burger Gendeng Burger Gendeng"
           date="Written 3 days ago"
         />
       </div>

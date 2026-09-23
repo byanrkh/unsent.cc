@@ -4,6 +4,7 @@ import { useLayoutEffect, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Mono } from "@/libs/Font";
 import { showToast } from "@/libs/toastBus";
+import { useResponsiveFontSize } from "@/libs/useResponsiveFontSize";
 
 const UNSENT_MESSAGE_KEY = "unsent-message";
 const UNSENT_TO_KEY = "unsent-to";
@@ -14,6 +15,13 @@ const morphTransition = {
   duration: 0.6,
   ease: [0.16, 1, 0.3, 1] as const,
 };
+
+// Same values that used to live in the `text-[15px] sm:text-[20px]
+// md:text-[24px]` Tailwind classes — now resolved in JS so framer-motion
+// can animate the value itself. Note this page tops out at 24px (no
+// `lg:` override), which is exactly what caused the size to snap when
+// coming from the home page's 32px on large screens.
+const MESSAGE_FONT_SIZE = { base: 15, sm: 20, md: 24 };
 
 function getCounterColor(length: number) {
   if (length >= MAX_MESSAGE_LENGTH) return "text-[#9a3b32]";
@@ -28,6 +36,7 @@ export default function SubmitForm() {
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const hasSubmittedRef = useRef(false);
+  const fontSize = useResponsiveFontSize(MESSAGE_FONT_SIZE);
 
   // Keep the latest values in refs so the unmount-detection effect
   // below doesn't need `to`/`message` in its deps.
@@ -74,12 +83,16 @@ export default function SubmitForm() {
     };
   }, []);
 
+  // `fontSize` is also a dep here for the same reason as on the home
+  // page: it's resolved asynchronously by useResponsiveFontSize, so the
+  // height must be recomputed once it lands or the box stays sized for
+  // the smaller base font and the larger text gets clipped.
   useLayoutEffect(() => {
     const el = textareaRef.current;
     if (!el) return;
     el.style.height = "auto";
     el.style.height = `${el.scrollHeight}px`;
-  }, [message]);
+  }, [message, fontSize]);
 
   function handleLeave() {
     // Frontend only for now — no submission logic yet.
@@ -126,7 +139,8 @@ export default function SubmitForm() {
               setMessage(e.target.value.slice(0, MAX_MESSAGE_LENGTH))
             }
             transition={morphTransition}
-            className={`${Mono.className} min-w-0 w-full resize-none overflow-hidden bg-transparent py-1.5 text-[15px] font-light leading-normal text-[#171717] outline-none placeholder:text-[#9c9c9c] [caret-shape:bar] caret-[#171717] sm:text-[20px] md:text-[24px]`}
+            style={{ fontSize }}
+            className={`${Mono.className} min-w-0 w-full resize-none overflow-hidden bg-transparent py-1.5 font-light leading-normal text-[#171717] outline-none placeholder:text-[#9c9c9c] [caret-shape:bar] caret-[#171717]`}
           />
           <motion.span
             layoutId="unsent-count"

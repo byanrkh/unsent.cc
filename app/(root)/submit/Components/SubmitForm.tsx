@@ -91,7 +91,7 @@ export default function SubmitForm() {
   return (
     <div className="w-full min-w-0">
       <div className="flex flex-col gap-7 sm:gap-8">
-        <label className="flex min-w-0 flex-col gap-1.5">
+        <label className="flex min-w-0 flex-col gap-1.5 animate-page-in">
           <span className="text-xs tracking-wide text-[#9c9c9c] sm:text-sm">
             To
           </span>
@@ -108,7 +108,7 @@ export default function SubmitForm() {
         </label>
 
         <label className="flex min-w-0 flex-col gap-1.5">
-          <span className="text-xs tracking-wide text-[#9c9c9c] sm:text-sm">
+          <span className="text-xs tracking-wide text-[#9c9c9c] sm:text-sm animate-page-in">
             Message
           </span>
           <motion.textarea
@@ -145,7 +145,7 @@ export default function SubmitForm() {
         <button
           type="button"
           onClick={handleLeave}
-          className="group inline-flex items-center gap-2 text-[15px] tracking-wide text-[#171717] transition-all duration-300 ease-[cubic-bezier(0.22,0.61,0.36,1)] hover:opacity-60 sm:text-[17px]"
+          className="group inline-flex items-center gap-2 text-[15px] tracking-wide text-[#171717] transition-all duration-300 ease-[cubic-bezier(0.22,0.61,0.36,1)] hover:opacity-60 sm:text-[17px] animate-page-in"
         >
           Leave
           <span className="inline-block transition-transform duration-200 group-hover:translate-x-1">

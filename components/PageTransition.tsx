@@ -11,7 +11,7 @@ export default function PageTransition({
   const pathname = usePathname();
 
   return (
-    <div key={pathname} className="flex flex-1 flex-col animate-page-in">
+    <div key={pathname} className="flex flex-1 flex-col">
       {children}
     </div>
   );

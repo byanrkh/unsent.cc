@@ -84,13 +84,16 @@ export default function SubmitForm() {
             transition={morphTransition}
             className={`${Mono.className} min-w-0 w-full resize-none overflow-hidden bg-transparent py-1.5 text-[15px] font-light leading-normal text-[#171717] outline-none placeholder:text-[#9c9c9c] [caret-shape:bar] caret-[#171717] sm:text-[20px] md:text-[24px]`}
           />
-          <span
+          <motion.span
+            layoutId="unsent-count"
+            layout="preserve-aspect"
             className={`self-end text-[11px] tabular-nums transition-colors duration-200 sm:text-xs ${getCounterColor(
               message.length,
             )}`}
+            transition={morphTransition}
           >
             {message.length}/{MAX_MESSAGE_LENGTH}
-          </span>
+          </motion.span>
         </label>
       </div>
 

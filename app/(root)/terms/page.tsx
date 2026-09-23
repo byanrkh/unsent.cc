@@ -181,10 +181,10 @@ export default function Page() {
             If you have questions regarding these terms or need to report
             abusive content, please contact us at{" "}
             <a
-              href="mailto:support@unsent.cc"
+              href="mailto:just@unsent.cc"
               className="text-[#171717] underline decoration-[#9c9c9c]/50 underline-offset-4 transition-opacity hover:opacity-55"
             >
-              support@unsent.cc
+              just@unsent.cc
             </a>
             .
           </p>

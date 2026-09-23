@@ -91,13 +91,14 @@ export default function UnsentForm() {
           </span>
         </button>
 
-        <span
+        <motion.span
           className={`text-[11px] tabular-nums transition-colors duration-200 sm:text-xs ${getCounterColor(
             message.length,
           )}`}
+          transition={morphTransition}
         >
           {message.length}/{MAX_MESSAGE_LENGTH}
-        </span>
+        </motion.span>
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mono } from "@/libs/Font";
 import { hasFelt, toggleFelt } from "@/libs/reaction";
+import { updateFeltCount } from "@/libs/letters";
 import ShareModal from "./ShareModal";
 
 type ExploreCardProps = {
@@ -23,16 +24,39 @@ export default function ExploreCard({
 }: ExploreCardProps) {
   const [shareOpen, setShareOpen] = useState(false);
   const [felt, setFelt] = useState(false);
+  // Local base count so an optimistic bump/rollback doesn't fight with
+  // the `feltCount` prop from the initial server fetch.
+  const [baseCount, setBaseCount] = useState(feltCount);
+  const [pending, setPending] = useState(false);
 
   // Read the persisted felt state after mount (avoids SSR/client mismatch).
   useEffect(() => {
     setFelt(hasFelt(id));
   }, [id]);
 
-  const displayCount = feltCount + (felt ? 1 : 0);
+  const displayCount = felt ? baseCount + 1 : baseCount;
 
-  function handleFeel() {
-    setFelt(toggleFelt(id));
+  async function handleFeel() {
+    if (pending) return;
+    setPending(true);
+
+    const next = toggleFelt(id);
+    setFelt(next);
+
+    const delta = next ? 1 : -1;
+    const updated = await updateFeltCount(id, delta);
+
+    if (updated === null) {
+      // Roll back both the local toggle and the persisted flag on failure.
+      toggleFelt(id);
+      setFelt(!next);
+    } else {
+      // Reconcile with the authoritative count from the database, keeping
+      // the optimistic "+1 if felt" math above consistent.
+      setBaseCount(next ? updated - 1 : updated);
+    }
+
+    setPending(false);
   }
 
   return (

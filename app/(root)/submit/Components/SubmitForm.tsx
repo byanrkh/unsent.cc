@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Mono } from "@/libs/Font";
 import { showToast } from "@/libs/toastBus";
 import { useResponsiveFontSize } from "@/libs/useResponsiveFontSize";
 import { useAutoResizeTextarea } from "@/libs/useAutoResizeTextarea";
+import { submitLetter } from "@/libs/letters";
 import {
   MAX_MESSAGE_LENGTH,
   morphTransition,
@@ -25,10 +27,12 @@ const MESSAGE_FONT_SIZE = { base: 15, sm: 20, md: 24 };
 export default function SubmitForm() {
   const [to, setTo] = useState("");
   const [message, setMessage] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const hasSubmittedRef = useRef(false);
   const fontSize = useResponsiveFontSize(MESSAGE_FONT_SIZE);
+  const router = useRouter();
 
   // Keep the latest values in refs so the unmount-detection effect
   // below doesn't need `to`/`message` in its deps.
@@ -77,11 +81,31 @@ export default function SubmitForm() {
 
   useAutoResizeTextarea(textareaRef, message, fontSize);
 
-  function handleLeave() {
-    // Frontend only for now — no submission logic yet.
-    hasSubmittedRef.current = true;
-    sessionStorage.removeItem(UNSENT_MESSAGE_KEY);
-    sessionStorage.removeItem(UNSENT_TO_KEY);
+  async function handleLeave() {
+    if (submitting) return;
+
+    if (!message.trim()) {
+      showToast("Write something before you leave it.");
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      await submitLetter({ to, message });
+
+      // Only mark as submitted and clear the draft once the write to
+      // Supabase actually succeeds — if it fails, the draft (and the
+      // "draft saved" warning on unmount) should stay intact.
+      hasSubmittedRef.current = true;
+      sessionStorage.removeItem(UNSENT_MESSAGE_KEY);
+      sessionStorage.removeItem(UNSENT_TO_KEY);
+      router.push("/explore");
+    } catch (error) {
+      console.error("Failed to submit letter:", error);
+      showToast("Something went wrong — please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -142,9 +166,10 @@ export default function SubmitForm() {
         <button
           type="button"
           onClick={handleLeave}
-          className="group inline-flex items-center gap-2 text-[15px] tracking-wide text-[#171717] transition-all duration-300 ease-[cubic-bezier(0.22,0.61,0.36,1)] hover:opacity-60 sm:text-[17px] animate-page-in"
+          disabled={submitting}
+          className="group inline-flex items-center gap-2 text-[15px] tracking-wide text-[#171717] transition-all duration-300 ease-[cubic-bezier(0.22,0.61,0.36,1)] hover:opacity-60 disabled:pointer-events-none disabled:opacity-40 sm:text-[17px] animate-page-in"
         >
-          Leave
+          {submitting ? "Leaving…" : "Leave"}
           <span className="inline-block transition-transform duration-200 group-hover:translate-x-1">
             →
           </span>

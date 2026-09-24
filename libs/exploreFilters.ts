@@ -1,4 +1,4 @@
-import type { Letter } from "./mockLetters";
+import type { Letter } from "./letters";
 
 // Ratio of the "For You" feed reserved for the newest letters; the rest is
 // filled with a random shuffle of the remaining pool.

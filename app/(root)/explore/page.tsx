@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import Container from "@/components/Container";
 import ExploreSearch from "./Components/ExploreSearch";
-import { LETTERS } from "@/libs/mockLetters";
+import { fetchLetters } from "@/libs/letters";
+
+// Always hit Supabase fresh instead of serving a stale cached page —
+// new letters should show up on /explore right away.
+export const dynamic = "force-dynamic";
 
 const PAGE_TITLE = "Explore";
 const PAGE_DESCRIPTION =
@@ -24,10 +28,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Page() {
+export default async function Page() {
+  const letters = await fetchLetters();
+
   return (
     <Container>
-      <ExploreSearch letters={LETTERS} />
+      <ExploreSearch letters={letters} />
     </Container>
   );
 }

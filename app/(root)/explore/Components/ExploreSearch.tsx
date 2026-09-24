@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import ExploreCard from "./ExploreCard";
 import ExploreTabs, { type ExploreTab } from "./ExploreTabs";
-import type { Letter } from "@/libs/mockLetters";
+import type { Letter } from "@/libs/letters";
 import {
   formatRelativeDate,
   getForYouLetters,

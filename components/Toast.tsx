@@ -18,7 +18,7 @@ export default function Toast() {
   }, [message]);
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center px-6 sm:bottom-8">
+    <div className="pointer-events-none fixed inset-x-0 bottom-6 z-[70] flex justify-center px-6 sm:bottom-8">
       <AnimatePresence>
         {message && (
           <motion.div

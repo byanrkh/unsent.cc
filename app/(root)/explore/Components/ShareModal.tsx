@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { Mono, newsreader } from "@/libs/Font";
+import { showToast } from "@/libs/toastBus";
 
 type Format = "square" | "story";
 
@@ -338,6 +339,7 @@ export default function ShareModal({
     a.href = dataUrl;
     a.download = `unsent-${to.toLowerCase().replace(/\s+/g, "-")}.png`;
     a.click();
+    showToast("Downloaded");
   }
 
   async function handleShare() {

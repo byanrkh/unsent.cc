@@ -2,12 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Mono } from "@/libs/Font";
 import { showToast } from "@/libs/toastBus";
 import { useResponsiveFontSize } from "@/libs/useResponsiveFontSize";
 import { useAutoResizeTextarea } from "@/libs/useAutoResizeTextarea";
 import { submitLetter } from "@/libs/letters";
+import { fireConfetti } from "@/libs/confetti";
 import {
   MAX_MESSAGE_LENGTH,
   morphTransition,
@@ -24,10 +25,15 @@ const UNSENT_TO_KEY = "unsent-to";
 // coming from the home page's 32px on large screens.
 const MESSAGE_FONT_SIZE = { base: 15, sm: 20, md: 24 };
 
+// How long the "Left ✓" state lingers before we navigate away, so the
+// confetti + success message actually get seen instead of being cut off.
+const REDIRECT_DELAY_MS = 1300;
+
 export default function SubmitForm() {
   const [to, setTo] = useState("");
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const hasSubmittedRef = useRef(false);
@@ -82,7 +88,7 @@ export default function SubmitForm() {
   useAutoResizeTextarea(textareaRef, message, fontSize);
 
   async function handleLeave() {
-    if (submitting) return;
+    if (submitting || submitted) return;
 
     if (!message.trim()) {
       showToast("Write something before you leave it.");
@@ -99,18 +105,29 @@ export default function SubmitForm() {
       hasSubmittedRef.current = true;
       sessionStorage.removeItem(UNSENT_MESSAGE_KEY);
       sessionStorage.removeItem(UNSENT_TO_KEY);
-      router.push("/explore");
+
+      setSubmitting(false);
+      setSubmitted(true);
+      fireConfetti();
+
+      window.setTimeout(() => {
+        router.push("/explore");
+      }, REDIRECT_DELAY_MS);
     } catch (error) {
       console.error("Failed to submit letter:", error);
       showToast("Something went wrong — please try again.");
-    } finally {
       setSubmitting(false);
     }
   }
 
+  const locked = submitting || submitted;
+
   return (
     <div className="w-full min-w-0">
-      <div className="flex flex-col gap-7 sm:gap-8">
+      <div
+        className="flex flex-col gap-7 sm:gap-8 transition-opacity duration-500"
+        style={{ opacity: locked ? 0.5 : 1 }}
+      >
         <label className="flex min-w-0 flex-col gap-1.5 animate-page-in">
           <span className="text-xs tracking-wide text-[#9c9c9c] sm:text-sm">
             To
@@ -122,8 +139,9 @@ export default function SubmitForm() {
             spellCheck={false}
             maxLength={60}
             value={to}
+            disabled={locked}
             onChange={(e) => setTo(e.target.value)}
-            className={`${Mono.className} min-w-0 w-full bg-transparent py-1 text-[15px] font-light text-[#171717] outline-none placeholder:text-[#9c9c9c] [caret-shape:bar] caret-[#171717] sm:text-[18px]`}
+            className={`${Mono.className} min-w-0 w-full bg-transparent py-1 text-[15px] font-light text-[#171717] outline-none placeholder:text-[#9c9c9c] [caret-shape:bar] caret-[#171717] sm:text-[18px] disabled:cursor-not-allowed`}
           />
         </label>
 
@@ -142,12 +160,13 @@ export default function SubmitForm() {
             maxLength={MAX_MESSAGE_LENGTH}
             rows={1}
             value={message}
+            disabled={locked}
             onChange={(e) =>
               setMessage(e.target.value.slice(0, MAX_MESSAGE_LENGTH))
             }
             transition={morphTransition}
             style={{ fontSize }}
-            className={`${Mono.className} min-w-0 w-full resize-none overflow-hidden bg-transparent py-1.5 font-light leading-normal text-[#171717] outline-none placeholder:text-[#9c9c9c] [caret-shape:bar] caret-[#171717]`}
+            className={`${Mono.className} min-w-0 w-full resize-none overflow-hidden bg-transparent py-1.5 font-light leading-normal text-[#171717] outline-none placeholder:text-[#9c9c9c] [caret-shape:bar] caret-[#171717] disabled:cursor-not-allowed`}
           />
           <motion.span
             layoutId="unsent-count"
@@ -162,18 +181,101 @@ export default function SubmitForm() {
         </label>
       </div>
 
-      <div className="mt-8 flex h-12.5 items-center sm:mt-10 sm:h-15">
-        <button
-          type="button"
-          onClick={handleLeave}
-          disabled={submitting}
-          className="group inline-flex items-center gap-2 text-[15px] tracking-wide text-[#171717] transition-all duration-300 ease-[cubic-bezier(0.22,0.61,0.36,1)] hover:opacity-60 disabled:pointer-events-none disabled:opacity-40 sm:text-[17px] animate-page-in"
-        >
-          {submitting ? "Leaving…" : "Leave"}
-          <span className="inline-block transition-transform duration-200 group-hover:translate-x-1">
-            →
-          </span>
-        </button>
+      <div className="mt-8 flex flex-col gap-3 sm:mt-10">
+        <div className="flex h-12.5 items-center sm:h-15">
+          <motion.button
+            type="button"
+            onClick={handleLeave}
+            disabled={locked}
+            whileTap={submitted ? undefined : { scale: 0.94 }}
+            animate={submitted ? { scale: [1, 1.08, 1] } : { scale: 1 }}
+            transition={{ duration: 0.4, ease: [0.22, 0.61, 0.36, 1] }}
+            className="group inline-flex items-center gap-2 text-[15px] tracking-wide text-[#171717] transition-opacity duration-300 ease-[cubic-bezier(0.22,0.61,0.36,1)] hover:opacity-60 disabled:pointer-events-none disabled:hover:opacity-100 sm:text-[17px] animate-page-in"
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              {submitted ? (
+                <motion.span
+                  key="submitted"
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="inline-flex items-center gap-2"
+                >
+                  Left
+                  <motion.svg
+                    initial={{ scale: 0, rotate: -25 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 420,
+                      damping: 15,
+                      delay: 0.1,
+                    }}
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                  >
+                    <path
+                      d="M5 13l4 4L19 7"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </motion.svg>
+                </motion.span>
+              ) : submitting ? (
+                <motion.span
+                  key="submitting"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="inline-flex items-center gap-2"
+                >
+                  Leaving
+                  <motion.span
+                    className="inline-block h-1.5 w-1.5 rounded-full bg-current"
+                    animate={{ opacity: [0.2, 1, 0.2] }}
+                    transition={{
+                      duration: 1,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                  />
+                </motion.span>
+              ) : (
+                <motion.span
+                  key="idle"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="inline-flex items-center gap-2"
+                >
+                  Leave
+                  <span className="inline-block transition-transform duration-200 group-hover:translate-x-1">
+                    →
+                  </span>
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </motion.button>
+        </div>
+
+        <AnimatePresence>
+          {submitted && (
+            <motion.p
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.4, delay: 0.15 }}
+              className="text-xs italic text-[#9c9c9c] sm:text-sm"
+            >
+              Your letter has been left, quietly.
+            </motion.p>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

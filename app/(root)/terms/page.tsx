@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Container from "@/components/Container";
+import Link from "next/link";
 
 const PAGE_TITLE = "Terms of Service";
 const PAGE_DESCRIPTION =
@@ -32,21 +33,21 @@ type Section = {
 const LAST_UPDATED = "Last updated: September 2026";
 
 const INTRO =
-  'Welcome to unsent.cc ("Unsend", "we", "us", or "our"). By accessing or using our platform, you agree to be bound by these Terms of Service. Please read them carefully.';
+  'Welcome to unsent.cc ("we", "us", or "our"). By accessing or using our platform, you agree to be bound by these Terms of Service. Please read them carefully.';
 
 const SECTIONS: Section[] = [
   {
     id: "core-concept",
     title: "1. The Core Concept",
     paragraphs: [
-      "Unsend is an anonymous digital archive for messages, thoughts, and sentiments that were meant to be written but never sent to their intended recipients. Unsend is not a social media platform, a direct messaging app, or a personal diary. It is a shared, quiet space for reflection and expression.",
+      "unsent.cc is an anonymous digital archive for messages, thoughts, and sentiments that were meant to be written but never sent to their intended recipients. unsent.cc is not a social media platform, a direct messaging app, or a personal diary. It is a shared, quiet space for reflection and expression.",
     ],
   },
   {
     id: "anonymity",
     title: "2. Complete Anonymity and Content Submission",
     list: [
-      "100% Anonymous by Default: All messages submitted to Unsend are strictly anonymous. You cannot set, customize, or attach a sender name or identity to public submissions.",
+      "100% Anonymous by Default: All messages submitted to unsent.cc are strictly anonymous. You cannot set, customize, or attach a sender name or identity to public submissions.",
       "No Personal Information: You are strictly prohibited from including personal identifiable information (such as real full names, phone numbers, addresses, social media handles, or private financial details) about yourself or anyone else inside the text of your message.",
       "Your Responsibility: You are solely responsible for the words you submit.",
     ],
@@ -55,7 +56,7 @@ const SECTIONS: Section[] = [
     id: "prohibited",
     title: "3. Prohibited Content and Conduct",
     paragraphs: [
-      "Unsend is built as a space for safe expression, but anonymity does not grant permission for abuse. You agree not to submit content or engage in activities that include:",
+      "unsent.cc is built as a space for safe expression, but anonymity does not grant permission for abuse. You agree not to submit content or engage in activities that include:",
     ],
     list: [
       "Doxxing: Revealing private personal information of any individual without consent.",
@@ -78,10 +79,10 @@ const SECTIONS: Section[] = [
     id: "data-storage",
     title: "5. Data Storage and Public Archiving",
     list: [
-      "No User Accounts: Unsend does not require or support registration, passwords, or traditional user accounts.",
+      "No User Accounts: unsent.cc does not require or support registration, passwords, or traditional user accounts.",
       "Public Database Storage: When you submit a message, the content of your message is permanently stored in our central database to be archived, displayed publicly on the platform, or delivered to other users anonymously.",
-      "Local Device Persistence: To allow you to view or revisit messages you have created on your device, Unsend relies on your browser's local storage (e.g., saving message identifiers locally).",
-      "Local Data Cleansing: Clearing your browser history, deleting local storage, or switching devices will disassociate your device from your local archive. While the messages remain anonymously stored in our public database, you will no longer be able to manage or view them locally as your submissions. Unsend is not responsible for restoring local tracking data.",
+      'No Submission History: unsent.cc does not keep any record, on your device or otherwise, linking a submitted message back to you. Once a message is left, it cannot be edited, retrieved, or deleted by you — there is no personal archive or "my submissions" view.',
+      "Local Storage for Preferences Only: Your browser's local storage is used only for small on-device conveniences, such as remembering which Explore tab you last viewed and which messages you've marked as \"felt.\" Clearing your local storage simply resets these preferences and has no effect on any message you've submitted.",
     ],
   },
   {
@@ -89,14 +90,14 @@ const SECTIONS: Section[] = [
     title: "6. Intellectual Property & License",
     list: [
       "You retain ownership of the original text you write.",
-      "By submitting a message publicly on Unsend, you grant us a non-exclusive, worldwide, royalty-free license to display, archive, format, and share the message (including dynamic image previews/share cards) within the scope of operating and promoting the Unsend platform.",
+      "By submitting a message publicly on unsent.cc, you grant us a non-exclusive, worldwide, royalty-free license to display, archive, format, and share the message (including dynamic image previews/share cards) within the scope of operating and promoting the unsent.cc platform.",
     ],
   },
   {
     id: "disclaimer",
     title: "7. Disclaimer of Warranties",
     paragraphs: [
-      'Unsend is provided on an "as is" and "as available" basis. We do not guarantee uninterrupted access, continuous availability, or that stored messages will never be lost. Unsend is an artistic digital archive and is not a professional counseling or crisis intervention service.',
+      'unsent.cc is provided on an "as is" and "as available" basis. We do not guarantee uninterrupted access, continuous availability, or that stored messages will never be lost. unsent.cc is an artistic digital archive and is not a professional counseling or crisis intervention service.',
     ],
   },
   {
@@ -180,12 +181,12 @@ export default function Page() {
           <p className="mt-3 text-[15px] leading-relaxed text-[#3a3a3a] sm:text-base">
             If you have questions regarding these terms or need to report
             abusive content, please contact us at{" "}
-            <a
+            <Link
               href="mailto:just@unsent.cc"
               className="text-[#171717] underline decoration-[#9c9c9c]/50 underline-offset-4 transition-opacity hover:opacity-55"
             >
               just@unsent.cc
-            </a>
+            </Link>
             .
           </p>
         </section>

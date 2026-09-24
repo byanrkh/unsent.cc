@@ -173,7 +173,9 @@ export default function ExploreSearch({ letters }: ExploreSearchProps) {
         </div>
       ) : (
         <p className="py-10 text-center text-sm italic text-[#9c9c9c]">
-          No unsent letters found for "{query.trim()}".
+          {normalizedQuery
+            ? `No unsent letters found for "${query.trim()}".`
+            : "No messages yet — be the first to leave one."}
         </p>
       )}
     </>

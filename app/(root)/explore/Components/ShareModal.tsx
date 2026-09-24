@@ -253,6 +253,7 @@ export default function ShareModal({
   feltCount = 0,
 }: ShareModalProps) {
   const [format, setFormat] = useState<Format>("square");
+  const [showFeltCount, setShowFeltCount] = useState(false);
   const [dataUrl, setDataUrl] = useState<string | null>(null);
   const [rendering, setRendering] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -265,6 +266,12 @@ export default function ShareModal({
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // The felt count badge is opt-in and off by default every time the
+  // modal is (re)opened, rather than remembering the last toggle state.
+  useEffect(() => {
+    if (open) setShowFeltCount(false);
+  }, [open]);
 
   // Lock scroll + Esc to close
   useEffect(() => {
@@ -307,7 +314,7 @@ export default function ShareModal({
         to,
         message,
         date,
-        feltCount,
+        showFeltCount ? feltCount : undefined,
         monoFamily,
         serifFamily,
       );
@@ -323,7 +330,7 @@ export default function ShareModal({
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, format, to, message, date, feltCount]);
+  }, [open, format, to, message, date, feltCount, showFeltCount]);
 
   async function handleDownload() {
     if (!dataUrl) return;
@@ -430,9 +437,29 @@ export default function ShareModal({
               </div>
 
               {feltCount > 0 && (
-                <p className="text-[11px] tracking-wide text-[#9c9c9c] sm:text-xs">
-                  ♥ {feltCount} felt this
-                </p>
+                <label className="flex shrink-0 items-center gap-2 text-[11px] tracking-wide text-[#9c9c9c] sm:text-xs">
+                  <span className="whitespace-nowrap">Felt Count</span>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={showFeltCount}
+                    aria-label="Show felt count on the shared image"
+                    onClick={() => setShowFeltCount((prev) => !prev)}
+                    className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors duration-200 ${
+                      showFeltCount ? "bg-[#171717]" : "bg-[#171717]/15"
+                    }`}
+                  >
+                    <motion.span
+                      animate={{ x: showFeltCount ? 16 : 0 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 500,
+                        damping: 32,
+                      }}
+                      className="absolute left-0.5 h-4 w-4 rounded-full bg-white shadow-sm"
+                    />
+                  </button>
+                </label>
               )}
             </div>
 

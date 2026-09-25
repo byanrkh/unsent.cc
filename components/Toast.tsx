@@ -26,7 +26,7 @@ export default function Toast() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 8 }}
             transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            className="pointer-events-auto rounded-full bg-[#171717] px-4 py-2.5 text-center text-xs tracking-wide text-white shadow-lg sm:text-sm"
+            className="pointer-events-auto rounded-full bg-[var(--color-inverse-bg)] px-4 py-2.5 text-center text-xs tracking-wide text-[var(--color-inverse-fg)] shadow-lg sm:text-sm"
           >
             {message}
           </motion.div>

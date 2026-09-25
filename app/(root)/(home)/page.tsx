@@ -27,7 +27,7 @@ export default async function Page() {
             kegeser sama tinggi marquee/CTA di bawahnya. */}
         <div className="flex flex-1 flex-col items-center justify-center">
           <div className="mx-auto w-full max-w-175">
-            <p className="mb-10 max-w-57.5 text-base italic text-[#3a3a3a] sm:mb-14 font-medium animate-page-in">
+            <p className="mb-10 max-w-57.5 text-base italic text-[var(--color-fg-secondary)] sm:mb-14 font-medium animate-page-in">
               Some things are easier to write
               <br />
               than to say.
@@ -48,7 +48,7 @@ export default async function Page() {
             <div className="mt-5 flex justify-center sm:mt-6 animate-page-in">
               <Link
                 href="/explore"
-                className="group inline-flex items-center gap-1.5 text-[13px] italic text-[#9c9c9c] transition-colors duration-200 hover:text-[#171717] sm:text-sm"
+                className="group inline-flex items-center gap-1.5 text-[13px] italic text-[var(--color-muted)] transition-colors duration-200 hover:text-[var(--foreground)] sm:text-sm"
               >
                 Read more unsent letters
                 <span className="inline-block not-italic transition-transform duration-200 group-hover:translate-x-1">
@@ -60,7 +60,7 @@ export default async function Page() {
         </div>
       </main>
 
-      <footer className="px-6 pb-8 pt-5 text-center text-xs text-[#3a3a3a] sm:px-10 sm:pb-9 sm:text-right sm:text-[15px] animate-page-in">
+      <footer className="px-6 pb-8 pt-5 text-center text-xs text-[var(--color-fg-secondary)] sm:px-10 sm:pb-9 sm:text-right sm:text-[15px] animate-page-in">
         <span className="tabular-nums">
           {THINGS_LEFT_UNSAID.toLocaleString("en-US")}
         </span>{" "}

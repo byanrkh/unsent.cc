@@ -64,7 +64,7 @@ export default function UnsentForm() {
           }
           transition={morphTransition}
           style={{ fontSize }}
-          className={`${Mono.className} min-w-0 w-full flex-1 resize-none overflow-hidden bg-transparent py-1.5 font-light leading-normal text-[#171717] outline-none placeholder:text-[#9c9c9c] [caret-shape:bar] caret-[#171717]`}
+          className={`${Mono.className} min-w-0 w-full flex-1 resize-none overflow-hidden bg-transparent py-1.5 font-light leading-normal text-[var(--foreground)] outline-none placeholder:text-[var(--color-muted)] [caret-shape:bar] caret-[var(--foreground)]`}
         />
       </div>
 
@@ -72,7 +72,7 @@ export default function UnsentForm() {
         <button
           type="button"
           onClick={handleContinue}
-          className={`group inline-flex items-center gap-2 text-[15px] tracking-wide text-[#171717] transition-all duration-300 ease-[cubic-bezier(0.22,0.61,0.36,1)] hover:opacity-60 sm:text-[17px] ${
+          className={`group inline-flex items-center gap-2 text-[15px] tracking-wide text-[var(--foreground)] transition-all duration-300 ease-[cubic-bezier(0.22,0.61,0.36,1)] hover:opacity-60 sm:text-[17px] ${
             hasWord
               ? "pointer-events-auto translate-y-0 opacity-100"
               : "pointer-events-none translate-y-2 opacity-0"

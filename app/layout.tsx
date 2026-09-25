@@ -84,8 +84,11 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#fbfaf8",
-  colorScheme: "light",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fbfaf8" },
+    { media: "(prefers-color-scheme: dark)", color: "#121212" },
+  ],
+  colorScheme: "light dark",
 };
 
 const jsonLd = {
@@ -96,9 +99,32 @@ const jsonLd = {
   description: SITE_DESCRIPTION,
 };
 
+// Dijalanin sebelum React hydrate biar nggak ada "flash" tema salah pas
+// halaman pertama kali kebuka (baca preferensi tersimpan, fallback ke
+// preferensi sistem kalau user belum pernah milih manual).
+const THEME_KEY = "unsent-theme";
+const noFlashThemeScript = `
+(function () {
+  try {
+    var stored = localStorage.getItem("${THEME_KEY}");
+    var isDark = stored
+      ? stored === "dark"
+      : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if (isDark) document.documentElement.classList.add("dark");
+  } catch (e) {}
+})();
+`;
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${newsreader.className} h-full antialiased`}>
+    <html
+      lang="en"
+      className={`${newsreader.className} h-full antialiased`}
+      suppressHydrationWarning
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: noFlashThemeScript }} />
+      </head>
       <body className="min-h-full flex flex-col">
         <script
           type="application/ld+json"

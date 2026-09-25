@@ -34,13 +34,13 @@ export default function ChatMarquee({ letters }: ChatMarqueeProps) {
         {items.map((letter, index) => (
           <div
             key={`${letter.id}-${index}`}
-            className="flex max-w-64 shrink-0 items-center gap-2 rounded-full border border-[#171717]/8 bg-[#fbfaf8] px-4 py-2 sm:max-w-80 sm:px-4.5 sm:py-2.5"
+            className="flex max-w-64 shrink-0 items-center gap-2 rounded-full border border-[var(--foreground)]/8 bg-[var(--color-surface)] px-4 py-2 sm:max-w-80 sm:px-4.5 sm:py-2.5"
           >
-            <span className="shrink-0 text-[10px] tracking-wide text-[#9c9c9c] sm:text-[11px]">
+            <span className="shrink-0 text-[10px] tracking-wide text-[var(--color-muted)] sm:text-[11px]">
               To {letter.to}
             </span>
             <span
-              className={`${Mono.className} truncate text-[12px] font-light text-[#171717] sm:text-[13px]`}
+              className={`${Mono.className} truncate text-[12px] font-light text-[var(--foreground)] sm:text-[13px]`}
             >
               {letter.message}
             </span>

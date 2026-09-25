@@ -31,7 +31,8 @@ function renderListItem(item: string) {
 
   return (
     <>
-      <strong className="font-medium text-[#171717]">{lead}:</strong> {rest}
+      <strong className="font-medium text-[var(--foreground)]">{lead}:</strong>{" "}
+      {rest}
     </>
   );
 }
@@ -41,12 +42,12 @@ export default function Page() {
     <Container>
       <article className="pb-16 sm:pb-24">
         <header className="mb-12 sm:mb-16">
-          <h1 className="text-2xl font-medium tracking-tight text-[#171717] sm:text-3xl">
+          <h1 className="text-2xl font-medium tracking-tight text-[var(--foreground)] sm:text-3xl">
             {PAGE_TITLE}
           </h1>
         </header>
 
-        <p className="text-[15px] leading-relaxed text-[#3a3a3a] sm:text-base">
+        <p className="text-[15px] leading-relaxed text-[var(--color-fg-secondary)] sm:text-base">
           Some things are easier to write than to say.
           <br />
           <br />
@@ -65,10 +66,10 @@ export default function Page() {
         </p>
 
         <section className="mt-10 sm:mt-14">
-          <h2 className="text-lg font-medium text-[#171717] sm:text-xl">
+          <h2 className="text-lg font-medium text-[var(--foreground)] sm:text-xl">
             Why Unsent?
           </h2>
-          <p className="mt-3 text-[15px] leading-relaxed text-[#3a3a3a] sm:text-base">
+          <p className="mt-3 text-[15px] leading-relaxed text-[var(--color-fg-secondary)] sm:text-base">
             Not every message needs a recipient. Sometimes, writing the words is
             enough. Unsent exists for those messages the ones that stayed in
             your drafts, lived in your notes, or remained only in your head.
@@ -78,15 +79,15 @@ export default function Page() {
         </section>
 
         <section className="mt-10 sm:mt-14">
-          <h2 className="text-lg font-medium text-[#171717] sm:text-xl">
+          <h2 className="text-lg font-medium text-[var(--foreground)] sm:text-xl">
             Contact
           </h2>
-          <p className="mt-3 text-[15px] leading-relaxed text-[#3a3a3a] sm:text-base">
+          <p className="mt-3 text-[15px] leading-relaxed text-[var(--color-fg-secondary)] sm:text-base">
             If you have questions regarding these terms or need to report
             abusive content, please contact us at{" "}
             <Link
               href="mailto:hello@unsent.cc"
-              className="text-[#171717] underline decoration-[#9c9c9c]/50 underline-offset-4 transition-opacity hover:opacity-55"
+              className="text-[var(--foreground)] underline decoration-[var(--color-muted)]/50 underline-offset-4 transition-opacity hover:opacity-55"
             >
               hello@unsent.cc
             </Link>

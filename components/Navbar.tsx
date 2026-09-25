@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import ThemeToggle from "@/components/ThemeToggle";
 
 // Tambahin/hapus halaman di sini aja, otomatis kepake di desktop & mobile.
 const NAV_LINKS = [
@@ -37,47 +38,52 @@ export default function Navbar() {
       <div className="mx-auto flex max-w-175 items-center justify-between text-sm">
         <Link
           href="/"
-          className="tracking-wide text-lg text-[#171717] transition-opacity hover:opacity-55"
+          className="tracking-wide text-lg text-[var(--foreground)] transition-opacity hover:opacity-55"
         >
           unsent.cc
         </Link>
 
-        {/* Desktop nav */}
-        <ul className="hidden items-center gap-5 sm:flex sm:gap-8">
-          {NAV_LINKS.map((link) => (
-            <li
-              key={link.href}
-              className="text-[#171717] transition-opacity hover:opacity-55"
-            >
-              <Link href={link.href}>{link.label}</Link>
-            </li>
-          ))}
-        </ul>
+        <div className="flex items-center gap-5 sm:gap-8">
+          {/* Desktop nav */}
+          <ul className="hidden items-center gap-5 sm:flex sm:gap-8">
+            {NAV_LINKS.map((link) => (
+              <li
+                key={link.href}
+                className="text-[var(--foreground)] transition-opacity hover:opacity-55"
+              >
+                <Link href={link.href}>{link.label}</Link>
+              </li>
+            ))}
+          </ul>
 
-        {/* Mobile hamburger button */}
-        <button
-          type="button"
-          onClick={() => setIsOpen((prev) => !prev)}
-          aria-expanded={isOpen}
-          aria-label={isOpen ? "Close menu" : "Open menu"}
-          className="relative flex h-8 w-8 flex-col items-center justify-center gap-[5px] sm:hidden"
-        >
-          <motion.span
-            animate={isOpen ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 }}
-            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            className="h-[1.5px] w-5 bg-[#171717]"
-          />
-          <motion.span
-            animate={isOpen ? { opacity: 0 } : { opacity: 1 }}
-            transition={{ duration: 0.2 }}
-            className="h-[1.5px] w-5 bg-[#171717]"
-          />
-          <motion.span
-            animate={isOpen ? { rotate: -45, y: -6 } : { rotate: 0, y: 0 }}
-            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            className="h-[1.5px] w-5 bg-[#171717]"
-          />
-        </button>
+          {/* Kelihatan di mobile & desktop, gak ketutup di dalem menu */}
+          {/* <ThemeToggle /> */}
+
+          {/* Mobile hamburger button */}
+          <button
+            type="button"
+            onClick={() => setIsOpen((prev) => !prev)}
+            aria-expanded={isOpen}
+            aria-label={isOpen ? "Close menu" : "Open menu"}
+            className="relative flex h-8 w-8 flex-col items-center justify-center gap-[5px] sm:hidden"
+          >
+            <motion.span
+              animate={isOpen ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 }}
+              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              className="h-[1.5px] w-5 bg-[var(--foreground)]"
+            />
+            <motion.span
+              animate={isOpen ? { opacity: 0 } : { opacity: 1 }}
+              transition={{ duration: 0.2 }}
+              className="h-[1.5px] w-5 bg-[var(--foreground)]"
+            />
+            <motion.span
+              animate={isOpen ? { rotate: -45, y: -6 } : { rotate: 0, y: 0 }}
+              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              className="h-[1.5px] w-5 bg-[var(--foreground)]"
+            />
+          </button>
+        </div>
       </div>
 
       {/* Mobile expanded menu */}
@@ -102,7 +108,7 @@ export default function Navbar() {
                     ease: [0.16, 1, 0.3, 1],
                     delay: index * 0.04,
                   }}
-                  className="border-b border-[#171717]/10 text-[#171717] transition-opacity hover:opacity-55"
+                  className="border-b border-[var(--foreground)]/10 text-[var(--foreground)] transition-opacity hover:opacity-55"
                 >
                   <Link href={link.href} className="block py-3">
                     {link.label}

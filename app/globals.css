@@ -39,11 +39,55 @@
 }
 
 :root {
+  /* Page background & primary text */
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Elevation: page (--background) < surface (cards/pills) < elevated
+     (popovers/dropdowns/modals that sit above a card). */
+  --color-surface: #fbfaf8;
+  --color-elevated: #ffffff;
+
+  /* Text hierarchy */
+  --color-fg-secondary: #3a3a3a;
+  --color-muted: #9c9c9c;
+  --color-danger: #9a3b32;
+
+  /* Solid "inverse" pills — Toast, primary CTA buttons — always stay
+     high-contrast regardless of theme (dark chip in light mode, light
+     chip in dark mode). */
+  --color-inverse-bg: #171717;
+  --color-inverse-fg: #ffffff;
+
+  /* rgb triplet used inside rgba(var(--shadow-rgb), alpha) shadows */
+  --shadow-rgb: 23 23 23;
+
+  color-scheme: light;
+}
+
+.dark {
+  --background: #121212;
+  --foreground: #ededed;
+
+  --color-surface: #1c1b1a;
+  --color-elevated: #242220;
+
+  --color-fg-secondary: #c9c7c3;
+  --color-muted: #86837e;
+  --color-danger: #e2685c;
+
+  --color-inverse-bg: #ededed;
+  --color-inverse-fg: #171717;
+
+  --shadow-rgb: 0 0 0;
+
+  color-scheme: dark;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }

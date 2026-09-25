@@ -7,7 +7,7 @@ export const morphTransition = {
 };
 
 export function getCounterColor(length: number) {
-  if (length >= MAX_MESSAGE_LENGTH) return "text-[#9a3b32]";
-  if (length > 80) return "text-[#171717]";
-  return "text-[#9c9c9c]";
+  if (length >= MAX_MESSAGE_LENGTH) return "text-[var(--color-danger)]";
+  if (length > 80) return "text-[var(--foreground)]";
+  return "text-[var(--color-muted)]";
 }

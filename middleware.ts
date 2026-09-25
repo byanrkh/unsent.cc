@@ -24,6 +24,13 @@ async function isMaintenanceMode(): Promise<boolean> {
 }
 
 export async function middleware(request: NextRequest) {
+  // Cuma production yang boleh kena maintenance page. `next dev` selalu
+  // set NODE_ENV=development, jadi localhost otomatis lolos tanpa
+  // env var tambahan.
+  if (process.env.NODE_ENV !== "production") {
+    return NextResponse.next();
+  }
+
   if (request.nextUrl.pathname.startsWith("/maintenance")) {
     return NextResponse.next();
   }

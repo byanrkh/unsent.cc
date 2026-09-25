@@ -4,8 +4,7 @@ import Link from "next/link";
 
 const PAGE_TITLE = "About Unsent";
 const PAGE_DESCRIPTION =
-  "Terms of Service for unsent.cc — how anonymous submissions, content moderation, data storage, and your rights as a user work on the platform.";
-
+  "Learn what Unsent is and why it exists — a quiet place for the messages you never sent.";
 export const metadata: Metadata = {
   title: PAGE_TITLE,
   description: PAGE_DESCRIPTION,

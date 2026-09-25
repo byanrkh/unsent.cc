@@ -460,33 +460,6 @@ export default function ShareModal({
               </button>
             </div>
 
-            {/* copy link */}
-            <button
-              type="button"
-              onClick={handleCopyLink}
-              className={`mt-4 flex w-full items-center justify-center gap-2 rounded-full border px-4 py-2.5 text-[13px] transition-colors duration-200 ${
-                copied
-                  ? "border-[#171717]/15 bg-[#171717]/5 text-[#171717]"
-                  : "border-[#171717]/15 text-[#171717] hover:bg-[#171717]/5"
-              }`}
-            >
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="shrink-0 text-[#9c9c9c]"
-              >
-                <path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07l-1.5 1.5" />
-                <path d="M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07l1.5-1.5" />
-              </svg>
-              {copied ? "Link copied!" : "Copy link to this letter"}
-            </button>
-
             {/* format toggle + felt count */}
             <div className="mt-4 flex items-center justify-between gap-3">
               <div className="inline-flex rounded-full border border-[#171717]/10 bg-white p-1">
@@ -583,6 +556,33 @@ export default function ShareModal({
               </AnimatePresence>
               <canvas ref={canvasRef} className="hidden" />
             </div>
+
+            {/* copy link */}
+            <button
+              type="button"
+              onClick={handleCopyLink}
+              className={`mt-4 flex w-full items-center justify-center gap-2 rounded-full border px-4 py-2.5 text-[13px] transition-colors duration-200 ${
+                copied
+                  ? "border-[#171717]/15 bg-[#171717]/5 text-[#171717]"
+                  : "border-[#171717]/15 text-[#171717] hover:bg-[#171717]/5"
+              }`}
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="shrink-0 text-[#9c9c9c]"
+              >
+                <path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07l-1.5 1.5" />
+                <path d="M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07l1.5-1.5" />
+              </svg>
+              {copied ? "Link copied!" : "Copy link to this letter"}
+            </button>
 
             {/* actions */}
             <div className="mt-5 flex items-center gap-3">

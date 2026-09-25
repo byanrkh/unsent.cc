@@ -84,10 +84,11 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fbfaf8" },
-    { media: "(prefers-color-scheme: dark)", color: "#121212" },
-  ],
+  // Statis light — situsnya sekarang default light dan nggak ikut
+  // preferensi sistem, jadi warna chrome browser ngikut itu juga.
+  // (colorScheme tetep "light dark" karena dark mode masih ada, cuma
+  // dipilih manual lewat dropdown tema, bukan default otomatis.)
+  themeColor: "#fbfaf8",
   colorScheme: "light dark",
 };
 
@@ -100,17 +101,15 @@ const jsonLd = {
 };
 
 // Dijalanin sebelum React hydrate biar nggak ada "flash" tema salah pas
-// halaman pertama kali kebuka (baca preferensi tersimpan, fallback ke
-// preferensi sistem kalau user belum pernah milih manual).
+// halaman pertama kali kebuka (baca preferensi tersimpan; default-nya
+// selalu light kalau user belum pernah milih manual — nggak ikut
+// preferensi sistem).
 const THEME_KEY = "unsent-theme";
 const noFlashThemeScript = `
 (function () {
   try {
     var stored = localStorage.getItem("${THEME_KEY}");
-    var isDark = stored
-      ? stored === "dark"
-      : window.matchMedia("(prefers-color-scheme: dark)").matches;
-    if (isDark) document.documentElement.classList.add("dark");
+    if (stored === "dark") document.documentElement.classList.add("dark");
   } catch (e) {}
 })();
 `;

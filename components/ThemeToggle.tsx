@@ -1,12 +1,18 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { useTheme } from "@/libs/theme";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useTheme, type Theme } from "@/libs/theme";
 
-const switchTransition = {
-  type: "spring" as const,
-  stiffness: 500,
-  damping: 32,
+const OPTIONS: { value: Theme; label: string }[] = [
+  { value: "light", label: "Light" },
+  { value: "dark", label: "Dark" },
+];
+
+const dropdownTransition = {
+  type: "tween" as const,
+  duration: 0.18,
+  ease: [0.16, 1, 0.3, 1] as const,
 };
 
 export default function ThemeToggle({
@@ -14,71 +20,119 @@ export default function ThemeToggle({
 }: {
   className?: string;
 }) {
-  const { isDark, toggle, mounted } = useTheme();
+  const { theme, setTheme, mounted } = useTheme();
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  const current = OPTIONS.find((o) => o.value === theme) ?? OPTIONS[0];
+
+  // Close on outside click
+  useEffect(() => {
+    if (!open) return;
+    function onPointerDown(e: PointerEvent) {
+      if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    window.addEventListener("pointerdown", onPointerDown);
+    return () => window.removeEventListener("pointerdown", onPointerDown);
+  }, [open]);
+
+  // Close on Esc
+  useEffect(() => {
+    if (!open) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
 
   return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={isDark}
-      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-      onClick={toggle}
-      // Sembunyiin visual sampe mounted biar nggak ada micro-flicker icon
-      // salah pas hydration, tapi tetep reserve ruang (nggak layout-shift).
-      className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full border border-[var(--foreground)]/15 bg-[var(--foreground)]/8 transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--foreground)]/40 ${
+    <div
+      ref={rootRef}
+      className={`relative inline-block text-left ${
+        // Sembunyiin visual sampe mounted biar nggak ada micro-flicker
+        // label salah pas hydration, tapi tetep reserve ruang (nggak
+        // layout-shift).
         mounted ? "opacity-100" : "opacity-0"
       } ${className}`}
     >
-      <motion.span
-        animate={{ x: isDark ? 21 : 3 }}
-        transition={switchTransition}
-        className="absolute flex h-4.5 w-4.5 items-center justify-center rounded-full bg-[var(--color-elevated)] text-[var(--foreground)] shadow-sm"
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-label="Change theme"
+        className="flex items-center gap-1.5 text-[var(--foreground)] transition-opacity hover:opacity-55"
       >
-        {/* Sun */}
+        <span>{current.label}</span>
         <motion.svg
-          width="11"
-          height="11"
+          animate={{ rotate: open ? 180 : 0 }}
+          transition={dropdownTransition}
+          width="10"
+          height="10"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
-          strokeWidth="2"
+          strokeWidth="2.2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          initial={false}
-          animate={{
-            opacity: isDark ? 0 : 1,
-            scale: isDark ? 0.5 : 1,
-            rotate: isDark ? -90 : 0,
-          }}
-          transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-          className="absolute"
+          className="shrink-0"
         >
-          <circle cx="12" cy="12" r="4" />
-          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+          <polyline points="6 9 12 15 18 9" />
         </motion.svg>
+      </button>
 
-        {/* Moon */}
-        <motion.svg
-          width="11"
-          height="11"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          initial={false}
-          animate={{
-            opacity: isDark ? 1 : 0,
-            scale: isDark ? 1 : 0.5,
-            rotate: isDark ? 0 : 90,
-          }}
-          transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-          className="absolute"
-        >
-          <path d="M20.354 15.354A9 9 0 0 1 8.646 3.646 9.003 9.003 0 1 0 20.354 15.354Z" />
-        </motion.svg>
-      </motion.span>
-    </button>
+      <AnimatePresence>
+        {open && (
+          <motion.ul
+            role="listbox"
+            initial={{ opacity: 0, y: -6, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -6, scale: 0.98 }}
+            transition={dropdownTransition}
+            className="absolute right-0 top-[calc(100%+8px)] z-10 w-28 overflow-hidden rounded-xl border border-[var(--foreground)]/10 bg-[var(--color-elevated)] p-1 shadow-[0_12px_32px_rgba(var(--shadow-rgb),0.14)]"
+          >
+            {OPTIONS.map((option) => {
+              const selected = option.value === theme;
+              return (
+                <li key={option.value} role="option" aria-selected={selected}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setTheme(option.value);
+                      setOpen(false);
+                    }}
+                    className={`flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-left text-[13px] transition-colors duration-150 ${
+                      selected
+                        ? "bg-[var(--foreground)]/[0.06] text-[var(--foreground)]"
+                        : "text-[var(--foreground)] hover:bg-[var(--foreground)]/5"
+                    }`}
+                  >
+                    {option.label}
+                    {selected && (
+                      <svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="shrink-0"
+                      >
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    )}
+                  </button>
+                </li>
+              );
+            })}
+          </motion.ul>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }

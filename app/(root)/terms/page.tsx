@@ -137,7 +137,7 @@ export default function Page() {
           </p>
         </header>
 
-        <p className="text-[15px] leading-relaxed text-[#3a3a3a] sm:text-base">
+        <p className="text-[15px] leading-relaxed text-[var(--color-fg-secondary)] sm:text-base">
           {INTRO}
         </p>
 
@@ -150,7 +150,7 @@ export default function Page() {
             {section.paragraphs?.map((paragraph, index) => (
               <p
                 key={index}
-                className="mt-3 text-[15px] leading-relaxed text-[#3a3a3a] sm:text-base"
+                className="mt-3 text-[15px] leading-relaxed text-[var(--color-fg-secondary)] sm:text-base"
               >
                 {paragraph}
               </p>
@@ -161,7 +161,7 @@ export default function Page() {
                 {section.list.map((item, index) => (
                   <li
                     key={index}
-                    className="flex gap-3 text-[15px] leading-relaxed text-[#3a3a3a] sm:text-base"
+                    className="flex gap-3 text-[15px] leading-relaxed text-[var(--color-fg-secondary)] sm:text-base"
                   >
                     <span
                       aria-hidden="true"
@@ -179,7 +179,7 @@ export default function Page() {
           <h2 className="text-lg font-medium text-[var(--foreground)] sm:text-xl">
             Contact
           </h2>
-          <p className="mt-3 text-[15px] leading-relaxed text-[#3a3a3a] sm:text-base">
+          <p className="mt-3 text-[15px] leading-relaxed text-[var(--color-fg-secondary)] sm:text-base">
             If you have questions regarding these terms or need to report
             abusive content, please contact us at{" "}
             <Link

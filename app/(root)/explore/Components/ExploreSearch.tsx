@@ -153,7 +153,7 @@ export default function ExploreSearch({
   return (
     <>
       <div className="mb-8 flex flex-col gap-4 sm:mb-12 sm:flex-row sm:items-end sm:justify-between">
-        <p className="max-w-80 text-base italic text-[#3a3a3a] font-medium">
+        <p className="max-w-80 text-base italic text-[#3a3a3a] dark:text-[#686868] font-medium">
           Messages that were never sent —
           <br />
           read gently.

@@ -174,7 +174,7 @@ export default function ExploreCard({
                     setMenuOpen(false);
                     setReportOpen(true);
                   }}
-                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-[13px] text-[#9a3b32] transition-colors duration-150 hover:bg-[#9a3b32]/8 sm:text-sm"
+                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-[13px] text-[var(--color-danger)] transition-colors duration-150 hover:bg-[var(--color-danger)]/8 sm:text-sm"
                 >
                   <svg
                     width="14"

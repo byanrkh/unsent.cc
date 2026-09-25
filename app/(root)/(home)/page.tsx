@@ -4,6 +4,12 @@ import { shuffle } from "@/libs/exploreFilters";
 import UnsentForm from "./Components/UnsentForm";
 import ChatMarquee from "./Components/ChatMarquee";
 
+// Sama kayak /explore — selalu hit Supabase fresh tiap request, jangan
+// di-render statis pas build. Kalau nggak, "X things left unsaid" bakal
+// nge-freeze dari jumlah letters pas terakhir build/deploy, gak keitung
+// letters baru yang masuk sesudahnya.
+export const dynamic = "force-dynamic";
+
 const MARQUEE_PREVIEW_COUNT = 10;
 
 export default async function Page() {

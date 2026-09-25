@@ -40,31 +40,12 @@ export default function ExploreSearch({
     : undefined;
 
   // Modal preview kebuka otomatis begitu ada surat yang di-share ditemukan —
-  // tapi mulai dari `false` di sini biar konsisten sama render server (yang
-  // gak punya akses localStorage), baru di-set true di effect mounted kalau
-  // memang belum pernah ditutup sebelumnya. Ditutup -> `layoutId` yang sama
-  // di card di bawah bikin Framer Motion nge-morph modal ini balik ke
-  // posisi & ukuran card-nya, bukan cuma fade biasa.
+  // tapi mulai dari `false` di sini biar konsisten sama render server, baru
+  // di-set true di effect mounted (lihat di bawah) tergantung TIPE
+  // navigasinya. Ditutup -> `layoutId` yang sama di card di bawah bikin
+  // Framer Motion nge-morph modal ini balik ke posisi & ukuran card-nya,
+  // bukan cuma fade biasa.
   const [previewOpen, setPreviewOpen] = useState(false);
-
-  function dismissedKey(id: string) {
-    return `unsent:letter-preview-dismissed:${id}`;
-  }
-
-  // Nutup modal preview => ditandain di localStorage, jadi kalau halamannya
-  // di-refresh (URL-nya masih bawa ?letter=<id> yang sama), modalnya gak
-  // muncul lagi berkali-kali. Card-nya tetep dipin di atas seperti biasa.
-  function handleClosePreview() {
-    setPreviewOpen(false);
-    if (sharedLetter) {
-      try {
-        localStorage.setItem(dismissedKey(sharedLetter.id), "1");
-      } catch {
-        // localStorage bisa aja diblok (private mode dll) — gapapa,
-        // paling modalnya muncul lagi pas refresh, gak fatal.
-      }
-    }
-  }
 
   useEffect(() => {
     return () => {
@@ -85,14 +66,23 @@ export default function ExploreSearch({
     if (storedTab) setActiveTab(storedTab);
 
     if (sharedLetter) {
-      let alreadyDismissed = false;
+      // Modal-nya mau selalu muncul tiap kali link share ini DIBUKA (klik
+      // link, ketik URL, tab baru — mau berapa kali pun), tapi TIDAK
+      // muncul lagi kalau orangnya cuma nge-refresh halaman yang sama.
+      // Navigation Timing API bisa bedain dua itu lewat `entry.type`:
+      // "reload" vs "navigate"/"back_forward". Kalau API-nya gak
+      // available buat alasan apa pun, default-nya tetep nampilin modal
+      // (lebih aman daripada diem-diem gak pernah muncul).
+      let isReload = false;
       try {
-        alreadyDismissed =
-          localStorage.getItem(dismissedKey(sharedLetter.id)) === "1";
+        const [navEntry] = performance.getEntriesByType(
+          "navigation",
+        ) as PerformanceNavigationTiming[];
+        isReload = navEntry?.type === "reload";
       } catch {
-        alreadyDismissed = false;
+        isReload = false;
       }
-      if (!alreadyDismissed) setPreviewOpen(true);
+      if (!isReload) setPreviewOpen(true);
     }
 
     setMounted(true);
@@ -259,7 +249,7 @@ export default function ExploreSearch({
       {sharedLetter && (
         <SharedLetterModal
           open={previewOpen}
-          onClose={handleClosePreview}
+          onClose={() => setPreviewOpen(false)}
           letter={sharedLetter}
           date={formatRelativeDate(sharedLetter.createdAt)}
         />

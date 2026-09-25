@@ -140,7 +140,7 @@ export default function ReportModal({
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-[60] flex items-center justify-center bg-[#171717]/40 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-[var(--foreground)]/40 p-4 backdrop-blur-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -154,17 +154,17 @@ export default function ReportModal({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: 8 }}
             transition={modalTransition}
-            className="w-full max-w-md rounded-3xl border border-[#171717]/10 bg-[#fbfaf8] p-5 shadow-[0_20px_60px_rgba(23,23,23,0.18)] sm:p-6"
+            className="w-full max-w-md rounded-3xl border border-[var(--foreground)]/10 bg-[var(--color-surface)] p-5 shadow-[0_20px_60px_rgba(var(--shadow-rgb),0.18)] sm:p-6"
           >
             <div className="flex items-center justify-between">
-              <h2 className="text-base font-medium text-[#171717] sm:text-lg">
+              <h2 className="text-base font-medium text-[var(--foreground)] sm:text-lg">
                 Report this letter
               </h2>
               <button
                 type="button"
                 onClick={onClose}
                 aria-label="Close"
-                className="-m-1.5 rounded-full p-1.5 text-[#9c9c9c] transition-colors duration-200 hover:text-[#171717]"
+                className="-m-1.5 rounded-full p-1.5 text-[var(--color-muted)] transition-colors duration-200 hover:text-[var(--foreground)]"
               >
                 <svg
                   width="16"
@@ -181,14 +181,14 @@ export default function ReportModal({
               </button>
             </div>
 
-            <p className="mt-2 text-[13px] leading-relaxed text-[#9c9c9c] sm:text-sm">
+            <p className="mt-2 text-[13px] leading-relaxed text-[var(--color-muted)] sm:text-sm">
               Let us know what&apos;s wrong with this letter. Reports are
               anonymous and reviewed by our team.
             </p>
 
             {/* reason — custom dropdown */}
             <div className="mt-5 flex flex-col gap-1.5">
-              <span className="text-xs tracking-wide text-[#9c9c9c] sm:text-sm">
+              <span className="text-xs tracking-wide text-[var(--color-muted)] sm:text-sm">
                 Reason
               </span>
 
@@ -199,14 +199,18 @@ export default function ReportModal({
                   onClick={() => setDropdownOpen((v) => !v)}
                   aria-haspopup="listbox"
                   aria-expanded={dropdownOpen}
-                  className={`flex w-full items-center justify-between rounded-xl border bg-white px-3.5 py-2.5 text-left text-[14px] outline-none transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-60 sm:text-[15px] ${
+                  className={`flex w-full items-center justify-between rounded-xl border bg-[var(--color-elevated)] px-3.5 py-2.5 text-left text-[14px] outline-none transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-60 sm:text-[15px] ${
                     dropdownOpen
-                      ? "border-[#171717]/30"
-                      : "border-[#171717]/10 hover:border-[#171717]/20"
+                      ? "border-[var(--foreground)]/30"
+                      : "border-[var(--foreground)]/10 hover:border-[var(--foreground)]/20"
                   }`}
                 >
                   <span
-                    className={reason ? "text-[#171717]" : "text-[#9c9c9c]"}
+                    className={
+                      reason
+                        ? "text-[var(--foreground)]"
+                        : "text-[var(--color-muted)]"
+                    }
                   >
                     {reason || "Select a reason…"}
                   </span>
@@ -221,7 +225,7 @@ export default function ReportModal({
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    className="ml-2 shrink-0 text-[#9c9c9c]"
+                    className="ml-2 shrink-0 text-[var(--color-muted)]"
                   >
                     <polyline points="6 9 12 15 18 9" />
                   </motion.svg>
@@ -235,7 +239,7 @@ export default function ReportModal({
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: -6, scale: 0.98 }}
                       transition={dropdownTransition}
-                      className="absolute left-0 right-0 top-[calc(100%+6px)] z-10 overflow-hidden rounded-xl border border-[#171717]/10 bg-white p-1 shadow-[0_12px_32px_rgba(23,23,23,0.14)]"
+                      className="absolute left-0 right-0 top-[calc(100%+6px)] z-10 overflow-hidden rounded-xl border border-[var(--foreground)]/10 bg-[var(--color-elevated)] p-1 shadow-[0_12px_32px_rgba(var(--shadow-rgb),0.14)]"
                     >
                       {REASONS.map((option) => {
                         const selected = option === reason;
@@ -250,8 +254,8 @@ export default function ReportModal({
                               onClick={() => selectReason(option)}
                               className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-[14px] transition-colors duration-150 sm:text-[15px] ${
                                 selected
-                                  ? "bg-[#171717]/[0.06] text-[#171717]"
-                                  : "text-[#171717] hover:bg-[#171717]/5"
+                                  ? "bg-[var(--foreground)]/[0.06] text-[var(--foreground)]"
+                                  : "text-[var(--foreground)] hover:bg-[var(--foreground)]/5"
                               }`}
                             >
                               {option}
@@ -298,7 +302,7 @@ export default function ReportModal({
                       onChange={(e) => setOtherText(e.target.value)}
                       placeholder="Please specify…"
                       maxLength={140}
-                      className="w-full rounded-xl border border-[#171717]/10 bg-white px-3.5 py-2.5 text-[14px] text-[#171717] outline-none transition-colors duration-200 placeholder:text-[#9c9c9c] focus:border-[#171717]/30 disabled:cursor-not-allowed disabled:opacity-60 sm:text-[15px]"
+                      className="w-full rounded-xl border border-[var(--foreground)]/10 bg-[var(--color-elevated)] px-3.5 py-2.5 text-[14px] text-[var(--foreground)] outline-none transition-colors duration-200 placeholder:text-[var(--color-muted)] focus:border-[var(--foreground)]/30 disabled:cursor-not-allowed disabled:opacity-60 sm:text-[15px]"
                     />
                   </motion.div>
                 )}
@@ -311,7 +315,7 @@ export default function ReportModal({
                 type="button"
                 onClick={handleSubmit}
                 disabled={!canSubmit || submitting}
-                className="flex-1 rounded-full bg-[#171717] px-4 py-2.5 text-[13px] text-white transition-opacity duration-200 hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex-1 rounded-full bg-[var(--color-inverse-bg)] px-4 py-2.5 text-[13px] text-[var(--color-inverse-fg)] transition-opacity duration-200 hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {submitting ? "Submitting…" : "Submit Report"}
               </button>
@@ -319,7 +323,7 @@ export default function ReportModal({
                 type="button"
                 onClick={onClose}
                 disabled={submitting}
-                className="flex-1 rounded-full border border-[#171717]/15 px-4 py-2.5 text-[13px] text-[#171717] transition-colors duration-200 hover:bg-[#171717]/5 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex-1 rounded-full border border-[var(--foreground)]/15 px-4 py-2.5 text-[13px] text-[var(--foreground)] transition-colors duration-200 hover:bg-[var(--foreground)]/5 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Cancel
               </button>

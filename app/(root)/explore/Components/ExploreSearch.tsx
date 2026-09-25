@@ -159,8 +159,8 @@ export default function ExploreSearch({
           read gently.
         </p>
 
-        <div className="flex h-9 w-full shrink-0 items-center self-end rounded-full border border-[#171717]/10 bg-[#fbfaf8] sm:w-64 sm:self-auto">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center text-[#9c9c9c]">
+        <div className="flex h-9 w-full shrink-0 items-center self-end rounded-full border border-[var(--foreground)]/10 bg-[var(--color-surface)] sm:w-64 sm:self-auto">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center text-[var(--color-muted)]">
             <svg
               width="15"
               height="15"
@@ -182,7 +182,7 @@ export default function ExploreSearch({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search a name or word…"
-            className="h-full w-full min-w-0 bg-transparent pr-3.5 text-[13px] leading-none text-[#171717] outline-none placeholder:text-[#9c9c9c] placeholder:leading-none sm:text-sm"
+            className="h-full w-full min-w-0 bg-transparent pr-3.5 text-[13px] leading-none text-[var(--foreground)] outline-none placeholder:text-[var(--color-muted)] placeholder:leading-none sm:text-sm"
           />
         </div>
       </div>
@@ -239,7 +239,7 @@ export default function ExploreSearch({
           </AnimatePresence>
         </div>
       ) : (
-        <p className="py-10 text-center text-sm italic text-[#9c9c9c]">
+        <p className="py-10 text-center text-sm italic text-[var(--color-muted)]">
           {normalizedQuery
             ? `No unsent letters found for "${query.trim()}".`
             : "No messages yet — be the first to leave one."}

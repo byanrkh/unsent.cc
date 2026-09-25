@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { Mono, newsreader } from "@/libs/Font";
 import { showToast } from "@/libs/toastBus";
+import { useTheme } from "@/libs/theme";
 
 type Format = "square" | "story";
 
@@ -24,10 +25,33 @@ const FORMATS: { id: Format; label: string; width: number; height: number }[] =
     { id: "story", label: "16:9", width: 1080, height: 1920 },
   ];
 
-const INK = "#171717";
-const CREAM = "#fbfaf8";
-const MUTED = "#9c9c9c";
-const BORDER = "rgba(23, 23, 23, 0.1)";
+// Mirrors the CSS variables in app/globals.css so the generated share
+// image matches whichever theme is active when it's rendered, instead of
+// always coming out light. Kept as plain hex/rgba here (not var(--...))
+// because these are canvas fillStyle/strokeStyle values, not CSS.
+type Palette = {
+  pageBg: string;
+  cardBg: string;
+  ink: string;
+  muted: string;
+  border: string;
+};
+
+const LIGHT_PALETTE: Palette = {
+  pageBg: "#fbfaf8",
+  cardBg: "#ffffff",
+  ink: "#171717",
+  muted: "#9c9c9c",
+  border: "rgba(23, 23, 23, 0.1)",
+};
+
+const DARK_PALETTE: Palette = {
+  pageBg: "#1c1b1a",
+  cardBg: "#242220",
+  ink: "#ededed",
+  muted: "#86837e",
+  border: "rgba(237, 237, 237, 0.12)",
+};
 
 const modalTransition = {
   type: "tween" as const,
@@ -149,14 +173,17 @@ async function drawCard(
   feltCount: number | undefined,
   monoFamily: string,
   serifFamily: string,
+  isDark: boolean,
 ) {
   canvas.width = width;
   canvas.height = height;
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
 
+  const palette = isDark ? DARK_PALETTE : LIGHT_PALETTE;
+
   // background
-  ctx.fillStyle = CREAM;
+  ctx.fillStyle = palette.pageBg;
   ctx.fillRect(0, 0, width, height);
 
   const pad = width * 0.08;
@@ -165,11 +192,11 @@ async function drawCard(
   const cardW = width - pad * 2;
   const cardH = height - pad * 2;
 
-  ctx.fillStyle = "#ffffff";
+  ctx.fillStyle = palette.cardBg;
   roundedRect(ctx, cardX, cardY, cardW, cardH, width * 0.03);
   ctx.fill();
   ctx.lineWidth = 2;
-  ctx.strokeStyle = BORDER;
+  ctx.strokeStyle = palette.border;
   roundedRect(ctx, cardX, cardY, cardW, cardH, width * 0.03);
   ctx.stroke();
 
@@ -180,19 +207,19 @@ async function drawCard(
   const labelSize = width * 0.024;
   ctx.textBaseline = "alphabetic";
   ctx.font = `${labelSize}px ${serifFamily}`;
-  ctx.fillStyle = MUTED;
+  ctx.fillStyle = palette.muted;
   const toLabel = "To: ";
   const toLabelWidth = ctx.measureText(toLabel).width;
   const labelY = cardY + cardH * 0.16;
   ctx.fillText(toLabel, innerX, labelY);
-  ctx.fillStyle = INK;
+  ctx.fillStyle = palette.ink;
   ctx.fillText(to, innerX + toLabelWidth, labelY);
 
   // "♥ N felt this" — right-aligned, same row as the "To:" label
   if (feltCount && feltCount > 0) {
     const feltLabel = `♥ ${feltCount} felt this`;
     ctx.font = `${labelSize}px ${serifFamily}`;
-    ctx.fillStyle = MUTED;
+    ctx.fillStyle = palette.muted;
     const feltWidth = ctx.measureText(feltLabel).width;
     ctx.fillText(feltLabel, cardX + cardW - cardW * 0.09 - feltWidth, labelY);
   }
@@ -215,7 +242,7 @@ async function drawCard(
   let cursorY = messageCenterY - blockHeight / 2 + fontSize * 0.85;
 
   ctx.font = `300 ${fontSize}px ${monoFamily}`;
-  ctx.fillStyle = INK;
+  ctx.fillStyle = palette.ink;
   for (const line of lines) {
     ctx.fillText(line, innerX, cursorY);
     cursorY += lineHeight;
@@ -227,12 +254,12 @@ async function drawCard(
 
   if (date) {
     ctx.font = `${footerSize}px ${serifFamily}`;
-    ctx.fillStyle = MUTED;
+    ctx.fillStyle = palette.muted;
     ctx.fillText(date, innerX, footerY);
   }
 
   ctx.font = `italic ${footerSize * 1.05}px ${serifFamily}`;
-  ctx.fillStyle = MUTED;
+  ctx.fillStyle = palette.muted;
   const wordmark = "unsent.cc";
   const wordmarkWidth = ctx.measureText(wordmark).width;
   ctx.fillText(wordmark, cardX + cardW - cardW * 0.09 - wordmarkWidth, footerY);
@@ -263,6 +290,7 @@ export default function ShareModal({
   const [copied, setCopied] = useState(false);
   const copiedTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const { isDark } = useTheme();
 
   const active = FORMATS.find((f) => f.id === format)!;
 
@@ -331,6 +359,7 @@ export default function ShareModal({
         showFeltCount ? feltCount : undefined,
         monoFamily,
         serifFamily,
+        isDark,
       );
 
       if (!cancelled) {
@@ -344,7 +373,7 @@ export default function ShareModal({
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, format, to, message, date, feltCount, showFeltCount]);
+  }, [open, format, to, message, date, feltCount, showFeltCount, isDark]);
 
   async function handleDownload() {
     if (!dataUrl) return;
@@ -419,7 +448,7 @@ export default function ShareModal({
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-[60] flex items-center justify-center bg-[#171717]/40 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-[var(--foreground)]/40 p-4 backdrop-blur-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -433,17 +462,17 @@ export default function ShareModal({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: 8 }}
             transition={modalTransition}
-            className="w-full max-w-md rounded-3xl border border-[#171717]/10 bg-[#fbfaf8] p-5 shadow-[0_20px_60px_rgba(23,23,23,0.18)] sm:p-6"
+            className="w-full max-w-md rounded-3xl border border-[var(--foreground)]/10 bg-[var(--color-surface)] p-5 shadow-[0_20px_60px_rgba(var(--shadow-rgb),0.18)] sm:p-6"
           >
             <div className="flex items-center justify-between">
-              <h2 className="text-base font-medium text-[#171717] sm:text-lg">
+              <h2 className="text-base font-medium text-[var(--foreground)] sm:text-lg">
                 Share this letter
               </h2>
               <button
                 type="button"
                 onClick={onClose}
                 aria-label="Close"
-                className="-m-1.5 rounded-full p-1.5 text-[#9c9c9c] transition-colors duration-200 hover:text-[#171717]"
+                className="-m-1.5 rounded-full p-1.5 text-[var(--color-muted)] transition-colors duration-200 hover:text-[var(--foreground)]"
               >
                 <svg
                   width="16"
@@ -462,7 +491,7 @@ export default function ShareModal({
 
             {/* format toggle + felt count */}
             <div className="mt-4 flex items-center justify-between gap-3">
-              <div className="inline-flex rounded-full border border-[#171717]/10 bg-white p-1">
+              <div className="inline-flex rounded-full border border-[var(--foreground)]/10 bg-[var(--color-elevated)] p-1">
                 {FORMATS.map((f) => (
                   <button
                     key={f.id}
@@ -470,14 +499,14 @@ export default function ShareModal({
                     onClick={() => setFormat(f.id)}
                     className={`relative rounded-full px-4 py-1.5 text-[13px] transition-colors duration-200 ${
                       format === f.id
-                        ? "text-[#171717]"
-                        : "text-[#9c9c9c] hover:text-[#171717]"
+                        ? "text-[var(--foreground)]"
+                        : "text-[var(--color-muted)] hover:text-[var(--foreground)]"
                     }`}
                   >
                     {format === f.id && (
                       <motion.span
                         layoutId="share-format-pill"
-                        className="absolute inset-0 rounded-full bg-[#fbfaf8] border border-[#171717]/10"
+                        className="absolute inset-0 rounded-full bg-[var(--color-surface)] border border-[var(--foreground)]/10"
                         transition={modalTransition}
                       />
                     )}
@@ -487,7 +516,7 @@ export default function ShareModal({
               </div>
 
               {feltCount > 0 && (
-                <label className="flex shrink-0 items-center gap-2 text-[11px] tracking-wide text-[#9c9c9c] sm:text-xs">
+                <label className="flex shrink-0 items-center gap-2 text-[11px] tracking-wide text-[var(--color-muted)] sm:text-xs">
                   <span className="whitespace-nowrap">Felt Count</span>
                   <button
                     type="button"
@@ -496,7 +525,9 @@ export default function ShareModal({
                     aria-label="Show felt count on the shared image"
                     onClick={() => setShowFeltCount((prev) => !prev)}
                     className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors duration-200 ${
-                      showFeltCount ? "bg-[#171717]" : "bg-[#171717]/15"
+                      showFeltCount
+                        ? "bg-[var(--foreground)]"
+                        : "bg-[var(--foreground)]/15"
                     }`}
                   >
                     <motion.span
@@ -506,7 +537,7 @@ export default function ShareModal({
                         stiffness: 500,
                         damping: 32,
                       }}
-                      className="absolute left-0.5 h-4 w-4 rounded-full bg-white shadow-sm"
+                      className="absolute left-0.5 h-4 w-4 rounded-full bg-[var(--color-elevated)] shadow-sm"
                     />
                   </button>
                 </label>
@@ -522,7 +553,7 @@ export default function ShareModal({
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.98 }}
                   transition={modalTransition}
-                  className={`relative overflow-hidden rounded-2xl border border-[#171717]/10 bg-white ${
+                  className={`relative overflow-hidden rounded-2xl border border-[var(--foreground)]/10 bg-[var(--color-elevated)] ${
                     format === "square"
                       ? "aspect-square w-full"
                       : "aspect-[9/16] h-[52vh] max-h-[420px] w-auto"
@@ -537,7 +568,7 @@ export default function ShareModal({
                     />
                   )}
                   {rendering && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-white/70">
+                    <div className="absolute inset-0 flex items-center justify-center bg-[var(--color-elevated)]/70">
                       <svg
                         width="22"
                         height="22"
@@ -546,7 +577,7 @@ export default function ShareModal({
                         stroke="currentColor"
                         strokeWidth="2.2"
                         strokeLinecap="round"
-                        className="animate-spin text-[#9c9c9c]"
+                        className="animate-spin text-[var(--color-muted)]"
                       >
                         <path d="M21 12a9 9 0 1 1-6.219-8.56" />
                       </svg>
@@ -563,8 +594,8 @@ export default function ShareModal({
               onClick={handleCopyLink}
               className={`mt-4 flex w-full items-center justify-center gap-2 rounded-full border px-4 py-2.5 text-[13px] transition-colors duration-200 ${
                 copied
-                  ? "border-[#171717]/15 bg-[#171717]/5 text-[#171717]"
-                  : "border-[#171717]/15 text-[#171717] hover:bg-[#171717]/5"
+                  ? "border-[var(--foreground)]/15 bg-[var(--foreground)]/5 text-[var(--foreground)]"
+                  : "border-[var(--foreground)]/15 text-[var(--foreground)] hover:bg-[var(--foreground)]/5"
               }`}
             >
               <svg
@@ -576,7 +607,7 @@ export default function ShareModal({
                 strokeWidth="1.6"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="shrink-0 text-[#9c9c9c]"
+                className="shrink-0 text-[var(--color-muted)]"
               >
                 <path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07l-1.5 1.5" />
                 <path d="M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07l1.5-1.5" />
@@ -590,7 +621,7 @@ export default function ShareModal({
                 type="button"
                 onClick={handleShare}
                 disabled={!dataUrl || rendering}
-                className="flex-1 rounded-full bg-[#171717] px-4 py-2.5 text-[13px] text-white transition-opacity duration-200 hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex-1 rounded-full bg-[var(--color-inverse-bg)] px-4 py-2.5 text-[13px] text-[var(--color-inverse-fg)] transition-opacity duration-200 hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Share
               </button>
@@ -598,7 +629,7 @@ export default function ShareModal({
                 type="button"
                 onClick={handleDownload}
                 disabled={!dataUrl || rendering}
-                className="flex-1 rounded-full border border-[#171717]/15 px-4 py-2.5 text-[13px] text-[#171717] transition-colors duration-200 hover:bg-[#171717]/5 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex-1 rounded-full border border-[var(--foreground)]/15 px-4 py-2.5 text-[13px] text-[var(--foreground)] transition-colors duration-200 hover:bg-[var(--foreground)]/5 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Download
               </button>

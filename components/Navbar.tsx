@@ -57,7 +57,7 @@ export default function Navbar() {
           </ul>
 
           {/* Kelihatan di mobile & desktop, gak ketutup di dalem menu */}
-          {/* <ThemeToggle /> */}
+          <ThemeToggle />
 
           {/* Mobile hamburger button */}
           <button

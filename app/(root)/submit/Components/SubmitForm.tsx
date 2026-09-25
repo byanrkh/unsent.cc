@@ -129,7 +129,7 @@ export default function SubmitForm() {
         style={{ opacity: locked ? 0.5 : 1 }}
       >
         <label className="flex min-w-0 flex-col gap-1.5 animate-page-in">
-          <span className="text-xs tracking-wide text-[#9c9c9c] sm:text-sm">
+          <span className="text-xs tracking-wide text-[var(--color-muted)] sm:text-sm">
             To
           </span>
           <input
@@ -141,12 +141,12 @@ export default function SubmitForm() {
             value={to}
             disabled={locked}
             onChange={(e) => setTo(e.target.value)}
-            className={`${Mono.className} min-w-0 w-full bg-transparent py-1 text-[15px] font-light text-[#171717] outline-none placeholder:text-[#9c9c9c] [caret-shape:bar] caret-[#171717] sm:text-[18px] disabled:cursor-not-allowed`}
+            className={`${Mono.className} min-w-0 w-full bg-transparent py-1 text-[15px] font-light text-[var(--foreground)] outline-none placeholder:text-[var(--color-muted)] [caret-shape:bar] caret-[var(--foreground)] sm:text-[18px] disabled:cursor-not-allowed`}
           />
         </label>
 
         <label className="flex min-w-0 flex-col gap-1.5">
-          <span className="text-xs tracking-wide text-[#9c9c9c] sm:text-sm animate-page-in">
+          <span className="text-xs tracking-wide text-[var(--color-muted)] sm:text-sm animate-page-in">
             Message
           </span>
           <motion.textarea
@@ -166,7 +166,7 @@ export default function SubmitForm() {
             }
             transition={morphTransition}
             style={{ fontSize }}
-            className={`${Mono.className} min-w-0 w-full resize-none overflow-hidden bg-transparent py-1.5 font-light leading-normal text-[#171717] outline-none placeholder:text-[#9c9c9c] [caret-shape:bar] caret-[#171717] disabled:cursor-not-allowed`}
+            className={`${Mono.className} min-w-0 w-full resize-none overflow-hidden bg-transparent py-1.5 font-light leading-normal text-[var(--foreground)] outline-none placeholder:text-[var(--color-muted)] [caret-shape:bar] caret-[var(--foreground)] disabled:cursor-not-allowed`}
           />
           <motion.span
             layoutId="unsent-count"
@@ -190,7 +190,7 @@ export default function SubmitForm() {
             whileTap={submitted ? undefined : { scale: 0.94 }}
             animate={submitted ? { scale: [1, 1.08, 1] } : { scale: 1 }}
             transition={{ duration: 0.4, ease: [0.22, 0.61, 0.36, 1] }}
-            className="group inline-flex items-center gap-2 text-[15px] tracking-wide text-[#171717] transition-opacity duration-300 ease-[cubic-bezier(0.22,0.61,0.36,1)] hover:opacity-60 disabled:pointer-events-none disabled:hover:opacity-100 sm:text-[17px] animate-page-in"
+            className="group inline-flex items-center gap-2 text-[15px] tracking-wide text-[var(--foreground)] transition-opacity duration-300 ease-[cubic-bezier(0.22,0.61,0.36,1)] hover:opacity-60 disabled:pointer-events-none disabled:hover:opacity-100 sm:text-[17px] animate-page-in"
           >
             <AnimatePresence mode="wait" initial={false}>
               {submitted ? (
@@ -270,7 +270,7 @@ export default function SubmitForm() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.4, delay: 0.15 }}
-              className="text-xs italic text-[#9c9c9c] sm:text-sm"
+              className="text-xs italic text-[var(--color-muted)] sm:text-sm"
             >
               Your letter has been left, quietly.
             </motion.p>

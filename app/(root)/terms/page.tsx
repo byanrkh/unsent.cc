@@ -118,7 +118,8 @@ function renderListItem(item: string) {
 
   return (
     <>
-      <strong className="font-medium text-[#171717]">{lead}:</strong> {rest}
+      <strong className="font-medium text-[var(--foreground)]">{lead}:</strong>{" "}
+      {rest}
     </>
   );
 }
@@ -128,10 +129,10 @@ export default function Page() {
     <Container>
       <article className="pb-16 sm:pb-24">
         <header className="mb-12 sm:mb-16">
-          <h1 className="text-2xl font-medium tracking-tight text-[#171717] sm:text-3xl">
+          <h1 className="text-2xl font-medium tracking-tight text-[var(--foreground)] sm:text-3xl">
             {PAGE_TITLE}
           </h1>
-          <p className="mt-2 text-xs tracking-wide text-[#9c9c9c] sm:text-sm">
+          <p className="mt-2 text-xs tracking-wide text-[var(--color-muted)] sm:text-sm">
             {LAST_UPDATED}
           </p>
         </header>
@@ -142,7 +143,7 @@ export default function Page() {
 
         {SECTIONS.map((section) => (
           <section key={section.id} id={section.id} className="mt-10 sm:mt-14">
-            <h2 className="text-lg font-medium text-[#171717] sm:text-xl">
+            <h2 className="text-lg font-medium text-[var(--foreground)] sm:text-xl">
               {section.title}
             </h2>
 
@@ -164,7 +165,7 @@ export default function Page() {
                   >
                     <span
                       aria-hidden="true"
-                      className="mt-[9px] h-1 w-1 shrink-0 rounded-full bg-[#9c9c9c]"
+                      className="mt-[9px] h-1 w-1 shrink-0 rounded-full bg-[var(--color-muted)]"
                     />
                     <span>{renderListItem(item)}</span>
                   </li>
@@ -175,7 +176,7 @@ export default function Page() {
         ))}
 
         <section className="mt-10 sm:mt-14">
-          <h2 className="text-lg font-medium text-[#171717] sm:text-xl">
+          <h2 className="text-lg font-medium text-[var(--foreground)] sm:text-xl">
             Contact
           </h2>
           <p className="mt-3 text-[15px] leading-relaxed text-[#3a3a3a] sm:text-base">
@@ -183,7 +184,7 @@ export default function Page() {
             abusive content, please contact us at{" "}
             <Link
               href="mailto:hello@unsent.cc"
-              className="text-[#171717] underline decoration-[#9c9c9c]/50 underline-offset-4 transition-opacity hover:opacity-55"
+              className="text-[var(--foreground)] underline decoration-[var(--color-muted)]/50 underline-offset-4 transition-opacity hover:opacity-55"
             >
               hello@unsent.cc
             </Link>

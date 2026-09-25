@@ -39,7 +39,9 @@ export default function ExploreTabs({
             aria-busy={showSpinner || undefined}
             onClick={() => onChange(tab.key)}
             className={`relative flex items-center gap-1.5 pb-1.5 text-[13px] tracking-wide transition-opacity duration-200 sm:text-sm ${
-              isActive ? "text-[#171717]" : "text-[#9c9c9c] hover:opacity-70"
+              isActive
+                ? "text-[var(--foreground)]"
+                : "text-[var(--color-muted)] hover:opacity-70"
             }`}
           >
             {tab.label}
@@ -55,7 +57,7 @@ export default function ExploreTabs({
                 strokeLinecap="round"
                 animate={{ rotate: 360 }}
                 transition={{ repeat: Infinity, duration: 0.7, ease: "linear" }}
-                className="shrink-0 text-[#9c9c9c]"
+                className="shrink-0 text-[var(--color-muted)]"
                 aria-hidden="true"
               >
                 <path d="M21 12a9 9 0 1 1-2.64-6.36" />
@@ -65,7 +67,7 @@ export default function ExploreTabs({
             {isActive && (
               <motion.span
                 layoutId="explore-tab-underline"
-                className="absolute inset-x-0 -bottom-px h-px bg-[#171717]"
+                className="absolute inset-x-0 -bottom-px h-px bg-[var(--foreground)]"
                 transition={{ type: "spring", stiffness: 500, damping: 35 }}
               />
             )}

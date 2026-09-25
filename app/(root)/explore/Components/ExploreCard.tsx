@@ -94,20 +94,20 @@ export default function ExploreCard({
   }
 
   return (
-    <article className="group relative w-full rounded-2xl border border-[#171717]/8 bg-[#fbfaf8] px-6 py-6 shadow-[0_1px_2px_rgba(23,23,23,0.04)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(23,23,23,0.07)] sm:px-8 sm:py-8">
+    <article className="group relative w-full rounded-2xl border border-[var(--foreground)]/8 bg-[var(--color-surface)] px-6 py-6 shadow-[0_1px_2px_rgba(var(--shadow-rgb),0.04)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(var(--shadow-rgb),0.07)] sm:px-8 sm:py-8">
       {highlighted && (
         <motion.span
           aria-hidden
           initial={{ opacity: 1 }}
           animate={{ opacity: 0 }}
           transition={{ duration: 2, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          className="pointer-events-none absolute -inset-1 rounded-[20px] ring-2 ring-[#171717]/35"
+          className="pointer-events-none absolute -inset-1 rounded-[20px] ring-2 ring-[var(--foreground)]/35"
         />
       )}
 
       <div className="flex items-start justify-between gap-4">
-        <p className="text-xs tracking-wide text-[#9c9c9c] sm:text-sm">
-          To: <span className="text-[#171717]">{to}</span>
+        <p className="text-xs tracking-wide text-[var(--color-muted)] sm:text-sm">
+          To: <span className="text-[var(--foreground)]">{to}</span>
         </p>
 
         <div className="relative shrink-0" ref={menuRef}>
@@ -117,10 +117,10 @@ export default function ExploreCard({
             aria-label="More options"
             aria-haspopup="menu"
             aria-expanded={menuOpen}
-            className={`relative -m-1.5 rounded-full p-1.5 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#171717]/40 ${
+            className={`relative -m-1.5 rounded-full p-1.5 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--foreground)]/40 ${
               menuOpen
-                ? "text-[#171717]"
-                : "text-[#9c9c9c] hover:text-[#171717]"
+                ? "text-[var(--foreground)]"
+                : "text-[var(--color-muted)] hover:text-[var(--foreground)]"
             }`}
           >
             <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
@@ -138,7 +138,7 @@ export default function ExploreCard({
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -6, scale: 0.97 }}
                 transition={menuTransition}
-                className="absolute right-0 top-[calc(100%+6px)] z-10 w-44 overflow-hidden rounded-xl border border-[#171717]/10 bg-white p-1 shadow-[0_12px_32px_rgba(23,23,23,0.14)]"
+                className="absolute right-0 top-[calc(100%+6px)] z-10 w-44 overflow-hidden rounded-xl border border-[var(--foreground)]/10 bg-[var(--color-elevated)] p-1 shadow-[0_12px_32px_rgba(var(--shadow-rgb),0.14)]"
               >
                 <button
                   type="button"
@@ -147,7 +147,7 @@ export default function ExploreCard({
                     setMenuOpen(false);
                     setShareOpen(true);
                   }}
-                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-[13px] text-[#171717] transition-colors duration-150 hover:bg-[#171717]/5 sm:text-sm"
+                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-[13px] text-[var(--foreground)] transition-colors duration-150 hover:bg-[var(--foreground)]/5 sm:text-sm"
                 >
                   <svg
                     width="14"
@@ -158,7 +158,7 @@ export default function ExploreCard({
                     strokeWidth="1.6"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    className="shrink-0 text-[#9c9c9c]"
+                    className="shrink-0 text-[var(--color-muted)]"
                   >
                     <path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7" />
                     <polyline points="16 6 12 2 8 6" />
@@ -199,14 +199,14 @@ export default function ExploreCard({
       </div>
 
       <p
-        className={`${Mono.className} mt-4 text-[16px] font-light leading-relaxed text-[#171717] sm:mt-5 sm:text-[19px]`}
+        className={`${Mono.className} mt-4 text-[16px] font-light leading-relaxed text-[var(--foreground)] sm:mt-5 sm:text-[19px]`}
       >
         {message}
       </p>
 
       <div className="mt-5 flex items-center justify-between gap-4 sm:mt-6">
         {date ? (
-          <p className="text-[11px] tracking-wide text-[#9c9c9c] sm:text-xs">
+          <p className="text-[11px] tracking-wide text-[var(--color-muted)] sm:text-xs">
             {date}
           </p>
         ) : (
@@ -220,7 +220,9 @@ export default function ExploreCard({
           aria-pressed={felt}
           aria-label="Felt this"
           className={`flex items-center gap-1.5 rounded-full px-2 py-1 text-[11px] tracking-wide transition-colors duration-200 sm:text-xs ${
-            felt ? "text-[#171717]" : "text-[#9c9c9c] hover:text-[#171717]"
+            felt
+              ? "text-[var(--foreground)]"
+              : "text-[var(--color-muted)] hover:text-[var(--foreground)]"
           }`}
         >
           <motion.span

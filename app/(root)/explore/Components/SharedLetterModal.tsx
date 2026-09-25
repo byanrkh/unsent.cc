@@ -63,7 +63,7 @@ export default function SharedLetterModal({
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-[60] flex items-center justify-center bg-[#171717]/40 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-[var(--foreground)]/40 p-4 backdrop-blur-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -75,10 +75,10 @@ export default function SharedLetterModal({
           <motion.div
             layoutId={`letter-preview-${letter.id}`}
             transition={modalTransition}
-            className="w-full max-w-xl rounded-2xl border border-[#171717]/8 bg-[#fbfaf8] p-6 shadow-[0_20px_60px_rgba(23,23,23,0.18)] sm:p-8"
+            className="w-full max-w-xl rounded-2xl border border-[var(--foreground)]/8 bg-[var(--color-surface)] p-6 shadow-[0_20px_60px_rgba(var(--shadow-rgb),0.18)] sm:p-8"
           >
             <div className="flex items-start justify-between gap-4">
-              <div className="flex items-center gap-1.5 text-[11px] tracking-wide text-[#9c9c9c] sm:text-xs">
+              <div className="flex items-center gap-1.5 text-[11px] tracking-wide text-[var(--color-muted)] sm:text-xs">
                 <svg
                   width="12"
                   height="12"
@@ -100,7 +100,7 @@ export default function SharedLetterModal({
                 type="button"
                 onClick={onClose}
                 aria-label="Close"
-                className="-m-1.5 shrink-0 rounded-full p-1.5 text-[#9c9c9c] transition-colors duration-200 hover:text-[#171717]"
+                className="-m-1.5 shrink-0 rounded-full p-1.5 text-[var(--color-muted)] transition-colors duration-200 hover:text-[var(--foreground)]"
               >
                 <svg
                   width="16"
@@ -117,25 +117,25 @@ export default function SharedLetterModal({
               </button>
             </div>
 
-            <p className="mt-4 text-xs tracking-wide text-[#9c9c9c] sm:text-sm">
-              To: <span className="text-[#171717]">{letter.to}</span>
+            <p className="mt-4 text-xs tracking-wide text-[var(--color-muted)] sm:text-sm">
+              To: <span className="text-[var(--foreground)]">{letter.to}</span>
             </p>
 
             <p
-              className={`${Mono.className} mt-4 text-[17px] font-light leading-relaxed text-[#171717] sm:mt-5 sm:text-[20px]`}
+              className={`${Mono.className} mt-4 text-[17px] font-light leading-relaxed text-[var(--foreground)] sm:mt-5 sm:text-[20px]`}
             >
               {letter.message}
             </p>
 
-            <div className="mt-6 flex items-center justify-between gap-4 border-t border-[#171717]/8 pt-4 sm:mt-8">
+            <div className="mt-6 flex items-center justify-between gap-4 border-t border-[var(--foreground)]/8 pt-4 sm:mt-8">
               <div className="flex items-center gap-4">
                 {date && (
-                  <p className="text-[11px] tracking-wide text-[#9c9c9c] sm:text-xs">
+                  <p className="text-[11px] tracking-wide text-[var(--color-muted)] sm:text-xs">
                     {date}
                   </p>
                 )}
                 {letter.feltCount > 0 && (
-                  <p className="flex items-center gap-1.5 text-[11px] tracking-wide text-[#9c9c9c] sm:text-xs">
+                  <p className="flex items-center gap-1.5 text-[11px] tracking-wide text-[var(--color-muted)] sm:text-xs">
                     <svg
                       width="13"
                       height="13"
@@ -152,7 +152,7 @@ export default function SharedLetterModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="shrink-0 rounded-full border border-[#171717]/10 bg-white px-4 py-2 text-[11px] font-medium tracking-wide text-[#171717] transition-colors duration-200 hover:bg-[#171717]/5 sm:text-xs"
+                className="shrink-0 rounded-full border border-[var(--foreground)]/10 bg-[var(--color-elevated)] px-4 py-2 text-[11px] font-medium tracking-wide text-[var(--foreground)] transition-colors duration-200 hover:bg-[var(--foreground)]/5 sm:text-xs"
               >
                 View in feed
               </button>

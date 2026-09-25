@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from "framer-motion";
 // Tambahin/hapus halaman di sini aja, otomatis kepake di desktop & mobile.
 const NAV_LINKS = [
   { href: "/explore", label: "Explore" },
+  { href: "/about", label: "About" },
   { href: "/terms", label: "Terms" },
   { href: "/submit", label: "Submit" },
 ];

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import ExploreCard from "./ExploreCard";
 import ExploreTabs, { type ExploreTab } from "./ExploreTabs";
+import SharedLetterModal from "./SharedLetterModal";
 import type { Letter } from "@/libs/letters";
 import {
   formatRelativeDate,
@@ -30,8 +31,40 @@ export default function ExploreSearch({
   // this is true, and the tab/mix only update once it settles.
   const [refreshing, setRefreshing] = useState(false);
   const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const sharedCardRef = useRef<HTMLDivElement>(null);
-  const hasScrolledToShared = useRef(false);
+
+  // Kalau URL bawa ?letter=<id> (dari tombol "Copy link" di ShareModal),
+  // surat itu dicari dari data awal — lepas dari tab/search apa pun yang
+  // lagi aktif, sama kayak buka post dari link di Instagram.
+  const sharedLetter = sharedId
+    ? letters.find((letter) => letter.id === sharedId)
+    : undefined;
+
+  // Modal preview kebuka otomatis begitu ada surat yang di-share ditemukan —
+  // tapi mulai dari `false` di sini biar konsisten sama render server (yang
+  // gak punya akses localStorage), baru di-set true di effect mounted kalau
+  // memang belum pernah ditutup sebelumnya. Ditutup -> `layoutId` yang sama
+  // di card di bawah bikin Framer Motion nge-morph modal ini balik ke
+  // posisi & ukuran card-nya, bukan cuma fade biasa.
+  const [previewOpen, setPreviewOpen] = useState(false);
+
+  function dismissedKey(id: string) {
+    return `unsent:letter-preview-dismissed:${id}`;
+  }
+
+  // Nutup modal preview => ditandain di localStorage, jadi kalau halamannya
+  // di-refresh (URL-nya masih bawa ?letter=<id> yang sama), modalnya gak
+  // muncul lagi berkali-kali. Card-nya tetep dipin di atas seperti biasa.
+  function handleClosePreview() {
+    setPreviewOpen(false);
+    if (sharedLetter) {
+      try {
+        localStorage.setItem(dismissedKey(sharedLetter.id), "1");
+      } catch {
+        // localStorage bisa aja diblok (private mode dll) — gapapa,
+        // paling modalnya muncul lagi pas refresh, gak fatal.
+      }
+    }
+  }
 
   useEffect(() => {
     return () => {
@@ -50,7 +83,20 @@ export default function ExploreSearch({
   useEffect(() => {
     const storedTab = readStoredTab();
     if (storedTab) setActiveTab(storedTab);
+
+    if (sharedLetter) {
+      let alreadyDismissed = false;
+      try {
+        alreadyDismissed =
+          localStorage.getItem(dismissedKey(sharedLetter.id)) === "1";
+      } catch {
+        alreadyDismissed = false;
+      }
+      if (!alreadyDismissed) setPreviewOpen(true);
+    }
+
     setMounted(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const tabbedLetters = useMemo(() => {
@@ -68,29 +114,14 @@ export default function ExploreSearch({
       )
     : tabbedLetters;
 
-  // Kalau URL bawa ?letter=<id> (dari link yang di-share lewat ShareModal),
-  // surat itu dipin di paling atas — lepas dari tab atau search yang lagi
-  // aktif, mirip buka post dari link di Instagram.
-  const sharedLetter = sharedId
-    ? letters.find((letter) => letter.id === sharedId)
-    : undefined;
-
+  // Surat yang di-share selalu dipin di paling atas feed — lepas dari tab
+  // atau search yang lagi aktif.
   const filteredLetters = sharedLetter
     ? [
         sharedLetter,
         ...searchedLetters.filter((letter) => letter.id !== sharedLetter.id),
       ]
     : searchedLetters;
-
-  // Scroll ke card yang di-share sekali aja pas pertama kebuka.
-  useEffect(() => {
-    if (!sharedLetter || hasScrolledToShared.current || !mounted) return;
-    hasScrolledToShared.current = true;
-    sharedCardRef.current?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  }, [sharedLetter, mounted]);
 
   const REFRESH_DELAY_MS = 500;
 
@@ -186,7 +217,14 @@ export default function ExploreSearch({
               return (
                 <motion.div
                   key={letter.id}
-                  ref={isShared ? sharedCardRef : undefined}
+                  // `layoutId` cuma dipasang di card yang lagi di-preview.
+                  // Ini yang dibaca Framer Motion buat nyamain boks ini
+                  // sama boks di SharedLetterModal, sehingga pas modalnya
+                  // ditutup dia "menyusut" balik ke sini alih-alih cuma
+                  // ilang.
+                  layoutId={
+                    isShared ? `letter-preview-${letter.id}` : undefined
+                  }
                   layout
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -199,7 +237,11 @@ export default function ExploreSearch({
                     message={letter.message}
                     date={formatRelativeDate(letter.createdAt)}
                     feltCount={letter.feltCount}
-                    highlighted={isShared}
+                    // Ring pulse-nya baru nyala setelah modal preview
+                    // ditutup, biar keliatan nyambung sama animasi morph
+                    // "turun"-nya, bukan nyala bareng pas modal masih nutup
+                    // layar.
+                    highlighted={isShared && !previewOpen}
                   />
                 </motion.div>
               );
@@ -212,6 +254,15 @@ export default function ExploreSearch({
             ? `No unsent letters found for "${query.trim()}".`
             : "No messages yet — be the first to leave one."}
         </p>
+      )}
+
+      {sharedLetter && (
+        <SharedLetterModal
+          open={previewOpen}
+          onClose={handleClosePreview}
+          letter={sharedLetter}
+          date={formatRelativeDate(sharedLetter.createdAt)}
+        />
       )}
     </>
   );

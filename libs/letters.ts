@@ -82,3 +82,29 @@ export async function updateFeltCount(
 
   return data as number;
 }
+
+/**
+ * Inserts a new row into the `reports` table, flagging a letter for
+ * moderation review. Returns `true` on success, `false` on failure —
+ * callers decide how to surface that (e.g. a toast) rather than this
+ * throwing, since a failed report shouldn't ever crash the UI.
+ */
+export async function reportLetter(
+  letterId: string,
+  reason: string,
+): Promise<boolean> {
+  const trimmedReason = reason.trim();
+  if (!letterId || !trimmedReason) return false;
+
+  const { error } = await supabase.from("reports").insert({
+    letter_id: letterId,
+    reason: trimmedReason,
+  });
+
+  if (error) {
+    console.error("Failed to report letter:", error.message);
+    return false;
+  }
+
+  return true;
+}

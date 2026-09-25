@@ -6,6 +6,7 @@ import { Mono } from "@/libs/Font";
 import { hasFelt, toggleFelt } from "@/libs/reaction";
 import { updateFeltCount } from "@/libs/letters";
 import ShareModal from "./ShareModal";
+import ReportModal from "./ReportModal";
 
 type ExploreCardProps = {
   id: string;
@@ -23,6 +24,7 @@ export default function ExploreCard({
   feltCount = 0,
 }: ExploreCardProps) {
   const [shareOpen, setShareOpen] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
   const [felt, setFelt] = useState(false);
   // Local base count so an optimistic bump/rollback doesn't fight with
   // the `feltCount` prop from the initial server fetch.
@@ -66,27 +68,50 @@ export default function ExploreCard({
           To: <span className="text-[#171717]">{to}</span>
         </p>
 
-        <button
-          type="button"
-          onClick={() => setShareOpen(true)}
-          aria-label="Share this message"
-          className="relative -m-1.5 shrink-0 rounded-full p-1.5 text-[#9c9c9c] transition-colors duration-200 hover:text-[#171717] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#171717]/40"
-        >
-          <svg
-            width="15"
-            height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+        <div className="flex shrink-0 items-center gap-1">
+          <button
+            type="button"
+            onClick={() => setReportOpen(true)}
+            aria-label="Report this message"
+            className="relative -m-1.5 rounded-full p-1.5 text-[#9c9c9c] transition-colors duration-200 hover:text-[#171717] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#171717]/40"
           >
-            <path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7" />
-            <polyline points="16 6 12 2 8 6" />
-            <line x1="12" y1="2" x2="12" y2="15" />
-          </svg>
-        </button>
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M4 3v18" />
+              <path d="M4 4h13l-2.5 4L17 12H4" />
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setShareOpen(true)}
+            aria-label="Share this message"
+            className="relative -m-1.5 rounded-full p-1.5 text-[#9c9c9c] transition-colors duration-200 hover:text-[#171717] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#171717]/40"
+          >
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7" />
+              <polyline points="16 6 12 2 8 6" />
+              <line x1="12" y1="2" x2="12" y2="15" />
+            </svg>
+          </button>
+        </div>
       </div>
 
       <p
@@ -157,6 +182,12 @@ export default function ExploreCard({
         message={message}
         date={date}
         feltCount={displayCount}
+      />
+
+      <ReportModal
+        open={reportOpen}
+        onClose={() => setReportOpen(false)}
+        letterId={id}
       />
     </article>
   );

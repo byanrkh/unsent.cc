@@ -14,9 +14,13 @@ import { readStoredTab, writeStoredTab } from "@/libs/exploreTabPreference";
 
 type ExploreSearchProps = {
   letters: Letter[];
+  sharedId?: string;
 };
 
-export default function ExploreSearch({ letters }: ExploreSearchProps) {
+export default function ExploreSearch({
+  letters,
+  sharedId,
+}: ExploreSearchProps) {
   const [query, setQuery] = useState("");
   const [activeTab, setActiveTab] = useState<ExploreTab>("for-you");
   // Bumped every time a "For You" refresh completes so the random mix
@@ -26,6 +30,8 @@ export default function ExploreSearch({ letters }: ExploreSearchProps) {
   // this is true, and the tab/mix only update once it settles.
   const [refreshing, setRefreshing] = useState(false);
   const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const sharedCardRef = useRef<HTMLDivElement>(null);
+  const hasScrolledToShared = useRef(false);
 
   useEffect(() => {
     return () => {
@@ -54,13 +60,37 @@ export default function ExploreSearch({ letters }: ExploreSearchProps) {
   }, [activeTab, letters, forYouSeed, mounted]);
 
   const normalizedQuery = query.trim().toLowerCase();
-  const filteredLetters = normalizedQuery
+  const searchedLetters = normalizedQuery
     ? tabbedLetters.filter(
         (letter) =>
           letter.to.toLowerCase().includes(normalizedQuery) ||
           letter.message.toLowerCase().includes(normalizedQuery),
       )
     : tabbedLetters;
+
+  // Kalau URL bawa ?letter=<id> (dari link yang di-share lewat ShareModal),
+  // surat itu dipin di paling atas — lepas dari tab atau search yang lagi
+  // aktif, mirip buka post dari link di Instagram.
+  const sharedLetter = sharedId
+    ? letters.find((letter) => letter.id === sharedId)
+    : undefined;
+
+  const filteredLetters = sharedLetter
+    ? [
+        sharedLetter,
+        ...searchedLetters.filter((letter) => letter.id !== sharedLetter.id),
+      ]
+    : searchedLetters;
+
+  // Scroll ke card yang di-share sekali aja pas pertama kebuka.
+  useEffect(() => {
+    if (!sharedLetter || hasScrolledToShared.current || !mounted) return;
+    hasScrolledToShared.current = true;
+    sharedCardRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }, [sharedLetter, mounted]);
 
   const REFRESH_DELAY_MS = 500;
 
@@ -151,24 +181,29 @@ export default function ExploreSearch({ letters }: ExploreSearchProps) {
       {filteredLetters.length > 0 ? (
         <div className="grid grid-cols-1 gap-5 sm:gap-6">
           <AnimatePresence mode="popLayout" initial={false}>
-            {filteredLetters.map((letter) => (
-              <motion.div
-                key={letter.id}
-                layout
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <ExploreCard
-                  id={letter.id}
-                  to={letter.to}
-                  message={letter.message}
-                  date={formatRelativeDate(letter.createdAt)}
-                  feltCount={letter.feltCount}
-                />
-              </motion.div>
-            ))}
+            {filteredLetters.map((letter) => {
+              const isShared = letter.id === sharedLetter?.id;
+              return (
+                <motion.div
+                  key={letter.id}
+                  ref={isShared ? sharedCardRef : undefined}
+                  layout
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  <ExploreCard
+                    id={letter.id}
+                    to={letter.to}
+                    message={letter.message}
+                    date={formatRelativeDate(letter.createdAt)}
+                    feltCount={letter.feltCount}
+                    highlighted={isShared}
+                  />
+                </motion.div>
+              );
+            })}
           </AnimatePresence>
         </div>
       ) : (

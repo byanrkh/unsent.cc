@@ -28,12 +28,22 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function Page() {
+type PageProps = {
+  searchParams: Promise<{ letter?: string | string[] }>;
+};
+
+export default async function Page({ searchParams }: PageProps) {
   const letters = await fetchLetters();
+  const resolvedSearchParams = await searchParams;
+
+  // ?letter=<id> — dipasang lewat tombol "Copy link" di ShareModal.
+  const sharedId = Array.isArray(resolvedSearchParams.letter)
+    ? resolvedSearchParams.letter[0]
+    : resolvedSearchParams.letter;
 
   return (
     <Container>
-      <ExploreSearch letters={letters} />
+      <ExploreSearch letters={letters} sharedId={sharedId} />
     </Container>
   );
 }

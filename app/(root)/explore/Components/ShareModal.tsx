@@ -11,6 +11,7 @@ type Format = "square" | "story";
 type ShareModalProps = {
   open: boolean;
   onClose: () => void;
+  id: string;
   to: string;
   message: string;
   date?: string;
@@ -248,6 +249,7 @@ function dataUrlToFile(dataUrl: string, filename: string): Promise<File> {
 export default function ShareModal({
   open,
   onClose,
+  id,
   to,
   message,
   date,
@@ -258,6 +260,8 @@ export default function ShareModal({
   const [dataUrl, setDataUrl] = useState<string | null>(null);
   const [rendering, setRendering] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const copiedTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const active = FORMATS.find((f) => f.id === format)!;
@@ -271,7 +275,10 @@ export default function ShareModal({
   // The felt count badge is opt-in and off by default every time the
   // modal is (re)opened, rather than remembering the last toggle state.
   useEffect(() => {
-    if (open) setShowFeltCount(false);
+    if (open) {
+      setShowFeltCount(false);
+      setCopied(false);
+    }
   }, [open]);
 
   // Lock scroll + Esc to close
@@ -288,6 +295,12 @@ export default function ShareModal({
       window.removeEventListener("keydown", onKey);
     };
   }, [open, onClose]);
+
+  useEffect(() => {
+    return () => {
+      if (copiedTimeoutRef.current) clearTimeout(copiedTimeoutRef.current);
+    };
+  }, []);
 
   // Redraw whenever the modal opens or the format changes
   useEffect(() => {
@@ -365,6 +378,41 @@ export default function ShareModal({
     handleDownload();
   }
 
+  // Bikin link langsung ke surat ini — bukan slug, cuma ?letter=<id>
+  // di /explore. Pas dibuka, ExploreSearch yang nge-pin surat ini ke atas.
+  function getShareUrl() {
+    const origin = typeof window !== "undefined" ? window.location.origin : "";
+    return `${origin}/explore?letter=${id}`;
+  }
+
+  async function handleCopyLink() {
+    const url = getShareUrl();
+
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(url);
+      } else {
+        // Fallback buat browser lama / non-secure context yang gak punya
+        // Clipboard API.
+        const textarea = document.createElement("textarea");
+        textarea.value = url;
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+      }
+
+      setCopied(true);
+      showToast("Link copied");
+      if (copiedTimeoutRef.current) clearTimeout(copiedTimeoutRef.current);
+      copiedTimeoutRef.current = setTimeout(() => setCopied(false), 2000);
+    } catch {
+      showToast("Couldn't copy the link");
+    }
+  }
+
   if (!mounted) return null;
 
   return createPortal(
@@ -411,6 +459,33 @@ export default function ShareModal({
                 </svg>
               </button>
             </div>
+
+            {/* copy link */}
+            <button
+              type="button"
+              onClick={handleCopyLink}
+              className={`mt-4 flex w-full items-center justify-center gap-2 rounded-full border px-4 py-2.5 text-[13px] transition-colors duration-200 ${
+                copied
+                  ? "border-[#171717]/15 bg-[#171717]/5 text-[#171717]"
+                  : "border-[#171717]/15 text-[#171717] hover:bg-[#171717]/5"
+              }`}
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="shrink-0 text-[#9c9c9c]"
+              >
+                <path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07l-1.5 1.5" />
+                <path d="M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07l1.5-1.5" />
+              </svg>
+              {copied ? "Link copied!" : "Copy link to this letter"}
+            </button>
 
             {/* format toggle + felt count */}
             <div className="mt-4 flex items-center justify-between gap-3">

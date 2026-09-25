@@ -14,6 +14,9 @@ type ExploreCardProps = {
   message: string;
   date?: string;
   feltCount?: number;
+  /** True when this card was opened directly via a shared link — pinned
+   *  to the top of the feed and briefly ringed to draw the eye. */
+  highlighted?: boolean;
 };
 
 const menuTransition = {
@@ -28,6 +31,7 @@ export default function ExploreCard({
   message,
   date,
   feltCount = 0,
+  highlighted = false,
 }: ExploreCardProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
@@ -91,6 +95,16 @@ export default function ExploreCard({
 
   return (
     <article className="group relative w-full rounded-2xl border border-[#171717]/8 bg-[#fbfaf8] px-6 py-6 shadow-[0_1px_2px_rgba(23,23,23,0.04)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(23,23,23,0.07)] sm:px-8 sm:py-8">
+      {highlighted && (
+        <motion.span
+          aria-hidden
+          initial={{ opacity: 1 }}
+          animate={{ opacity: 0 }}
+          transition={{ duration: 2, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          className="pointer-events-none absolute -inset-1 rounded-[20px] ring-2 ring-[#171717]/35"
+        />
+      )}
+
       <div className="flex items-start justify-between gap-4">
         <p className="text-xs tracking-wide text-[#9c9c9c] sm:text-sm">
           To: <span className="text-[#171717]">{to}</span>
@@ -248,6 +262,7 @@ export default function ExploreCard({
       <ShareModal
         open={shareOpen}
         onClose={() => setShareOpen(false)}
+        id={id}
         to={to}
         message={message}
         date={date}
